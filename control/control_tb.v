@@ -1,29 +1,17 @@
+`include "control.v"
+
 // Testbench Code Goes here
 module control_tb;
 
 reg [7:0]opcode;
-wire [7:0]aluOp;
-wire regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite;
+wire [14:0] y;
 
 initial begin
-  $dumpfile("control.vcd");
-  $dumpvars(0, control_tb);
-  $monitor ("regDst=%b,branch=%b,memRead=%b,memToReg=%b,aluOp=%b,memWrite=%b,aluSrc=%b,regWrite=%b"
-    , regDst, branch, memRead, memToReg, aluOp, memWrite, aluSrc, regWrite);
+  $monitor ("y=%b", y);
   opcode = 8'h1;
   #4 $finish;
 end
 
-control U0 (
-opcode,
-regDst, 
-branch,
-memRead, 
-memToReg, 
-aluOp, 
-memWrite, 
-aluSrc, 
-regWrite
-);
+control U0 (opcode, y);
 
 endmodule

@@ -1,18 +1,18 @@
+`include "flipflop.v"
+
 // Testbench Code Goes here
 module flipflop_tb;
 
 reg clock;
-reg [2:0]d;
-wire [2:0]q;
+reg [14:0]d;
+wire [14:0]q;
 
 initial begin
-  $dumpfile("flipflop.vcd");
-  $dumpvars(0, flipflop_tb);
   $monitor ("%g\t   clock = %b     d = %b      q = %b", 
     $time, clock, d, q);
   clock = 0;
-  d = 3'b101;
-  #3 d = 3'b110;
+  d = 15'b1;
+  #3 d = 15'b0;
   #5 $finish;
 end
 
