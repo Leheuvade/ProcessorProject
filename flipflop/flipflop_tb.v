@@ -21,10 +21,6 @@ always begin
   #2 clock = ~clock; // Toggle clock every 5 ticks
 end
 
-flipflop U0 (
-d,
-q, 
-clock
-);
+flipflop U0 (d, q, clock);
 
 endmodule
