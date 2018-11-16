@@ -1,10 +1,10 @@
-`include "control.v"
+`include "decode.v"
 
 // Testbench Code Goes here
-module control_tb;
+module decode_tb;
 
-reg [7:0]opcode;
-wire [14:0] y;
+reg [6:0]opcode;
+wire [13:0] y;
 
 initial begin
   $monitor ("y=%b", y);
@@ -12,6 +12,6 @@ initial begin
   #4 $finish;
 end
 
-control U0 (opcode, y);
+decode U0 (opcode, y);
 
 endmodule
