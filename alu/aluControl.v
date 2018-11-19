@@ -1,6 +1,6 @@
-module alu_control (aluOp, aluCtrl);
+module aluControl (aluOp, aluCtrl);
 
-input [7:0]aluOp;
+input [6:0]aluOp;
 output [1:0]aluCtrl;
 
 reg aluCtrl;
@@ -9,9 +9,8 @@ wire aluOp;
 
 always @ (aluOp) 
 case(aluOp)
-  8'h0 : begin 
-   			$display("aluop = %h", aluOp);
-            aluCtrl <= 2'b00;
+  7'h0 : begin // Opcode 0x0 - ADD
+            aluCtrl <= 2'b00; //ADD
             end
   default : begin
               $display("AluControl default case %b", aluOp);
