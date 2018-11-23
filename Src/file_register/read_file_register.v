@@ -8,7 +8,7 @@ wire index;
 reg value;
 reg [31:0] registers [0:31];
 
-always @(negedge clock) begin
+always @(posedge clock) begin
 	$readmemh("../Resources/file_register.list", registers);
 	value = registers[0];
 end

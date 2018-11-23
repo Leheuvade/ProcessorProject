@@ -1,14 +1,19 @@
-module fetch(d, q, clock);
+`include "./memory/instruction_memory.v"
+`include "./file_register/read_file_register.v"
+`include "./file_register/update_pc.v"
 
-input [31:0]d;
+module fetch(clock, instruction);
+
 input clock;
-output [31:0]q;
+output [31:0]instruction;
 
-wire d, clock;
-reg q;
+wire clock;
+wire instruction;
+wire [31:0]valuePC;
+reg [4:0]regNumberPC = 5'b0;
 
-always @ (posedge clock) begin
-	q <= d;
-end
+read_file_register readPC(.clock(clock), .index(regNumberPC), .value(valuePC));
+update_pc update_pc(.clock(clock));
+instruction_memory getInstruction(.address(valuePC), .instruction(instruction));
 
 endmodule
