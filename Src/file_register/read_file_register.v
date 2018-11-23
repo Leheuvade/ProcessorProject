@@ -10,7 +10,7 @@ reg [31:0] registers [0:31];
 
 always @(posedge clock) begin
 	$readmemh("../Resources/file_register.list", registers);
-	value = registers[0];
+	value = registers[index];
 end
 
 endmodule
