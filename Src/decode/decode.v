@@ -28,7 +28,7 @@ case(opcode) //Update with the reals values
               rt = instruction[20:16];
               rd = instruction[15:11];
             end
-  6'b111111 : begin // Opcode 0x0 - ADD
+  6'b111111 : begin
       regDst = 1'b1; 
       branch = 1'b1;
       memRead = 1'b1;
