@@ -1,50 +1,23 @@
-module decode (clock, instruction, address, rs, rt, rd, controlBits);
+`include "./decode/control.v"
+`include "./composant/mux.v"
+`include "./alu/aluControl.v"
+
+module decode(instruction, op1, op2, aluCtrl);
 
 input [31:0]instruction;
-input clock;
-output [12:0]controlBits;
-output[4:0]rs, rt, rd;
-output [14:0]address;
+output [31:0]op1, op2;
+output [1:0]aluCtrl;
 
 wire [31:0]instruction;
-wire clock;
-reg [5:0]opcode;
-reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite;
-reg rs, rt, rd;
-reg controlBits;
+wire op1, op2;
+wire aluCtrl;
+wire [12:0]controlBits;
+wire [4:0]writeRegister;
 
-always @ (posedge clock) begin
-opcode = instruction[31:26];
-case(opcode) //Update with the reals values
-  6'b0 : begin // Opcode 0x0 - ADD
-              regDst = 1'b1; 
-              branch = 1'b0;
-              memRead = 1'b0;
-              memToReg = 1'b0;
-              memWrite = 1'b0; 
-              aluSrc = 1'b0;
-              regWrite = 1'b1;
-              rs = instruction[25:21];
-              rt = instruction[20:16];
-              rd = instruction[15:11];
-            end
-  6'b111111 : begin
-      regDst = 1'b1; 
-      branch = 1'b1;
-      memRead = 1'b1;
-      memToReg = 1'b1;
-      memWrite = 1'b1; 
-      aluSrc = 1'b1;
-      regWrite = 1'b1;
-      rs = instruction[25:21];
-      rt = instruction[20:16];
-      rd = instruction[15:11];
-    end
-  default : begin
-              $display("@%0dns default is selected, opcode %b",$time,opcode);
-            end
-endcase
-controlBits = {regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, opcode};
-end
-
+control control(.opcode(instruction[31:26]), .controlBits(controlBits));
+read_file_register readFR1(.index(instruction[25:21]), .value(op1));
+read_file_register readFR2(.index(instruction[20:16]), .value(op2));
+mux mux(.in1(instruction[20:16]), .in2(instruction[15:11]), .ctrl(controlBits[0]), .out(writeRegister));
+write_file_register writeFR(.index(5'b1), .value({27'b0, writeRegister}));
+aluControl aluControl(.aluOp(instruction[31:26]), .aluCtrl(aluCtrl));
 endmodule

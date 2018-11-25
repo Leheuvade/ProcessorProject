@@ -1,24 +1,19 @@
-`include "./alu/aluControl.v"
-
-module alu (op1, op2, aluOp, zero, result, clock);
+module alu (op1, op2, aluCtrl, zero, result);
 
 input [31:0]op1, op2;
-input [6:0]aluOp;
-input clock; 
-
+input [1:0]aluCtrl;
 output zero;
 output [31:0]result;
 
 reg zero, result;
-wire op1, op2, ctrl, clock;
+wire op1, op2;
 wire [1:0]aluCtrl;
 
-aluControl aluControl(.aluOp(aluOp), .aluCtrl(aluCtrl));
-
-always @ (posedge clock) begin
-	zero <= 0;
+always @ (op1 or op2 or aluCtrl) begin
 	if (op1 == op2) begin
 	  zero <= 1;
+	end else begin
+		zero <= 0;
 	end
 
 	case(aluCtrl)
