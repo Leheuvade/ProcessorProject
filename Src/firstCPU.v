@@ -20,7 +20,7 @@ wire [1:0]aluCtrl, aluCtrl_IDEX;
 wire zero, zero_EXMEM;
 wire [31:0]result, result_EXMEM, result_MEMWB;
 wire [31:0]address, address_IDEX;
-wire [7:0]controlBits, controlBits_IDEX;
+wire [9:0]controlBits, controlBits_IDEX;
 wire memRead_EXMEM, memWrite_EXMEM;
 wire [31:0]dataMemory, readData_MEMWB;
 

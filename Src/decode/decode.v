@@ -6,14 +6,14 @@ module decode(instruction, readRegister1, readRegister2, address, aluCtrl, contr
 
 input [31:0]instruction;
 output [31:0]readRegister1, readRegister2, address;
-output [7:0]controlBits;
+output [9:0]controlBits;
 output [1:0]aluCtrl;
 
 wire [31:0]instruction;
 wire readRegister1, readRegister2;
 wire address = {16'b0, instruction[15:0]};
 wire aluCtrl;
-wire [7:0]controlBits;
+wire [9:0]controlBits;
 wire [4:0]writeRegister;
 
 control control(.opcode(instruction[31:26]), .controlBits(controlBits));
