@@ -1,12 +1,13 @@
 module control (opcode, controlBits);
 
 input [5:0]opcode;
-output [12:0]controlBits;
+output [7:0]controlBits;
 
 wire opcode;
 reg controlBits;
 reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump;
 always @ (opcode) begin
+$display("opcode=%b", opcode);
 case(opcode) //Update with the reals values
   6'b0 : begin // Opcode 0x0 - ADD
       regDst = 1'b1; 
@@ -51,6 +52,7 @@ case(opcode) //Update with the reals values
 
     //Optional?
   6'b001011 : begin // Opcode 0x11 - LDW
+      $display("valid");
       regDst = 1'b0; 
       branch = 1'b0;
       memRead = 1'b1;
@@ -98,6 +100,7 @@ case(opcode) //Update with the reals values
     end
 
   6'b011111 : begin // Opcode 0x31 - JUMP 
+      $display("jump");
       regDst = 1'b1; 
       branch = 1'b1;
       memRead = 1'b0;
@@ -113,7 +116,7 @@ case(opcode) //Update with the reals values
               $display("@%0dns default is selected, opcode %b",$time,opcode);
             end
 endcase
-controlBits = {regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, opcode, jump};
+controlBits = {regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump};
 end
 
 endmodule

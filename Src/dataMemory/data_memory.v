@@ -1,4 +1,4 @@
-module  data_memory(address, instruction, write_data, memRead, memWrite);
+module  data_memory(address, write_data, memRead, memWrite, read_data);
 
 input [31:0]address;
 input [31:0]write_data;
@@ -11,7 +11,7 @@ wire write_data;
 wire memWrite;
 wire memRead; 
 reg read_data;
-reg [7:0] memory [0:255];
+reg [7:0] memory [0:18];
 
 
 initial begin

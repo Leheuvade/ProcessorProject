@@ -1,8 +1,8 @@
-module mux(in1, in2, ctrl, out);
+module mux32(in1, in2, ctrl, out);//Generic mux ???
 
-input [4:0]in1, in2;
+input [31:0]in1, in2;
 input ctrl;
-output [0:4]out; 
+output [31:0]out; 
 
 reg out; 
 wire in1, in2, ctrl;
