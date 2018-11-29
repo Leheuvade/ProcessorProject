@@ -21,7 +21,7 @@ wire zero, zero_EXMEM;
 wire [31:0]result, result_EXMEM, result_MEMWB;
 wire [31:0]address, address_IDEX;
 wire [9:0]controlBits, controlBits_IDEX;
-wire memRead_EXMEM, memWrite_EXMEM;
+wire memRead_EXMEM, memWrite_EXMEM, byte_EXMEM, word_EXMEM;
 wire [31:0]dataMemory, readData_MEMWB;
 
 initial begin
@@ -47,15 +47,19 @@ alu alu(.op1(readRegister1_IDEX), .op2(op2), .aluCtrl(aluCtrl_IDEX), .zero(zero)
 ex_mem ex_mem(.inZero(zero), 
 	.inResult(result), 
 	.inReadRegister2(readRegister2_IDEX), 
-	.inMemRead(controlBits_IDEX[5]), 
-	.inMemWrite(controlBits_IDEX[3]), 
+	.inMemRead(controlBits_IDEX[7]), 
+	.inMemWrite(controlBits_IDEX[5]),
+	.inByte(controlBits_IDEX[1]),
+	.inWord(controlBits_IDEX[0]), 
 	.clock(clock), 
 	.outZero(zero_EXMEM), 
 	.outResult(result_EXMEM), 
 	.outReadRegister2(readRegister2_EXMEM), 
 	.outMemRead(memRead_EXMEM), 
-	.outMemWrite(memWrite_EXMEM)
+	.outMemWrite(memWrite_EXMEM),
+	.outByte(byte_EXMEM),
+	.outWord(word_EXMEM),
 );
-data_memory data_memory(.address(result_EXMEM), .write_data(readRegister2_EXMEM), .memRead(memRead_EXMEM), .memWrite(memWrite_EXMEM), .read_data(dataMemory));
+data_memory data_memory(.address(result_EXMEM), .write_data(readRegister2_EXMEM), .memRead(memRead_EXMEM), .memWrite(memWrite_EXMEM), .byte(byte_EXMEM) , .word(word_EXMEM), .read_data(dataMemory));
 mem_wb mem_wb(.inResult(result_EXMEM), .inReadData(dataMemory), .clock(clock), .outResult(result_MEMWB), .outReadData(readData_MEMWB));
 endmodule
