@@ -1,4 +1,4 @@
-module pcFF(inPC, clock, rst, outPC);
+module pc(inPC, rst, clock, outPC);
 
 input [31:0]inPC; 
 input clock, rst;

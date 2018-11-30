@@ -1,17 +1,24 @@
-module id_ex(inR1, inR2, inAddress, inAluCtrl, inControlBits, clock, outR1, outR2, outAluCtrl, outAddress, outControlBits);
+module id_ex(inR1, inR2, inAddress, inAluCtrl, inControlBits, inWriteRegister, inPc, clock, outR1, outR2, outAluCtrl, outAddress, outControlBits, outWriteRegister, outPc);
 
-input [31:0]inR1, inR2, inAddress;
+input [31:0]inR1, inR2, inAddress, inPc;
 input [7:0]inControlBits; 
 input [1:0]inAluCtrl;
+input [4:0]inWriteRegister;
 input clock;
-output [31:0]outR1, outR2, outAddress;
+output [31:0]outR1, outR2, outAddress, outPc;
 output [7:0]outControlBits;
 output [1:0]outAluCtrl;
+output [4:0]outWriteRegister;
+
 
 wire clock;
-wire inR1, inR2, inAddress, inControlBits;
+wire inR1, inR2, inAddress, inPc; 
+wire inControlBits;
 wire inAluCtrl;
-reg outR1, outR2, outAddress, outControlBits;
+wire inWriteRegister;
+reg outR1, outR2, outAddress, outPc;
+reg outControlBits;
+reg outWriteRegister;
 reg outAluCtrl;
 
 always @ (posedge clock) begin
@@ -20,6 +27,8 @@ always @ (posedge clock) begin
   outAluCtrl <= inAluCtrl;
   outAddress <= inAddress;
   outControlBits <= inControlBits;
+  outWriteRegister <= inWriteRegister;
+  outPc <= inPc;
 end
 
 endmodule

@@ -7,8 +7,7 @@ wire opcode;
 reg controlBits;
 reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump;
 always @ (opcode) begin
-$display("opcode=%b", opcode);
-case(opcode) //Update with the reals values
+case(opcode)
   6'b0 : begin // Opcode 0x0 - ADD
       regDst = 1'b1; 
       branch = 1'b0;
@@ -39,8 +38,8 @@ case(opcode) //Update with the reals values
       regWrite = 1'b1;
       jump = 1'b0;
             end
-  6'b001010 : begin // Opcode 0x10 - LDB: //To sign Extend, to 32 bits in register 
-      regDst = 1'b1; 
+  6'b010000 : begin // Opcode 0x10 - LDB: //To sign Extend, to 32 bits in register 
+      regDst = 1'b0; 
       branch = 1'b0;
       memRead = 1'b1;
       memToReg = 1'b1;
@@ -50,9 +49,7 @@ case(opcode) //Update with the reals values
       jump = 1'b0;
     end
 
-    //Optional?
-  6'b001011 : begin // Opcode 0x11 - LDW
-      $display("valid");
+  6'b010001 : begin // Opcode 0x11 - LDW
       regDst = 1'b0; 
       branch = 1'b0;
       memRead = 1'b1;
@@ -62,7 +59,7 @@ case(opcode) //Update with the reals values
       regWrite = 1'b1;
       jump = 1'b0;
             end
-  6'b001100 : begin // Opcode 0x12 - STB
+  6'b010010 : begin // Opcode 0x12 - STB
       regDst = 1'b0; 
       branch = 1'b0;
       memRead = 1'b0;
@@ -72,10 +69,7 @@ case(opcode) //Update with the reals values
       regWrite = 1'b0;
       jump = 1'b0;
     end
-
-    //Optional?
-
-  6'b001101 : begin // Opcode 0x13 - STW
+  6'b010011 : begin // Opcode 0x13 - STW
       regDst = 1'b0; 
       branch = 1'b0;
       memRead = 1'b0;
@@ -85,10 +79,8 @@ case(opcode) //Update with the reals values
       regWrite = 1'b0;
       jump = 1'b0;
     end
-
-
 //PC 
-  6'b011110 : begin // Opcode 0x30 - BEQ
+  6'b110000 : begin // Opcode 0x30 - BEQ
       regDst = 1'b0; 
       branch = 1'b1;
       memRead = 1'b0;
@@ -99,9 +91,8 @@ case(opcode) //Update with the reals values
       jump = 1'b0;
     end
 
-  6'b011111 : begin // Opcode 0x31 - JUMP 
-      $display("jump");
-      regDst = 1'b1; 
+  6'b110001 : begin // Opcode 0x31 - JUMP 
+      regDst = 1'b0; 
       branch = 1'b1;
       memRead = 1'b0;
       memToReg = 1'b0;

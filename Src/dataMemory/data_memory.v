@@ -21,14 +21,9 @@ end
 always @(address or memRead or memWrite or write_data) begin 
 	if(memWrite == 1'b1) begin
 		memory[address] = write_data;
-
-	end 
-	
-	else if (memRead == 1'b1) begin
-	//Not sure what will happen in here..
+		$writememb("../Resources/data_memory.list", memory);
+	end else if (memRead == 1'b1) begin
 		read_data = memory[address];
 	end
-
-
 end
 endmodule

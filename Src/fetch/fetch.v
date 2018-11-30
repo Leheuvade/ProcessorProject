@@ -1,16 +1,16 @@
 `include "./instructionMemory/instruction_memory.v"
-// `include "./file_register/update_pc.v"
 
-module fetch(instruction);
+module fetch(pc, instruction, newPc);
 
-output [31:0]instruction;
+input [31:0]pc;
+output [31:0]instruction, newPc;
 
+wire pc;
 wire instruction;
-wire [31:0]valuePC;
-reg [4:0]regNumberPC = 5'b0;
+reg newPc;
 
-read_file_register readPC(.index(regNumberPC), .value(valuePC));
-// update_pc update_pc(.clock(clock));
-instruction_memory getInstruction(.address(valuePC), .instruction(instruction));
-
+instruction_memory getInstruction(.address(pc), .instruction(instruction));
+always @(pc) begin
+	newPc = pc + 4;
+end
 endmodule
