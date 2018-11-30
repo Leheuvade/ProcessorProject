@@ -21,7 +21,7 @@ wire [1:0]aluCtrl, aluCtrl_IDEX;
 wire zero;
 wire [31:0]result, result_EXMEM, result_MEMWB;
 wire [31:0]address, address_IDEX;
-wire [7:0]controlBits, controlBits_IDEX;
+wire [0:8]controlBits, controlBits_IDEX;
 wire memRead_EXMEM, memWrite_EXMEM, memToReg_EXMEM, memToReg_MEMWB, regWrite_EXMEM, regWrite_MEMWB, byte_EXMEM, word_EXMEM;
 wire [31:0]dataMemory, readData_MEMWB;
 wire [31:0]valueToWB;
@@ -30,12 +30,12 @@ wire [31:0]currentPc, pcIncr, pc_IFID, pc_IDEX;
 initial begin
   $dumpfile("firstCPU.vcd");
   $dumpvars(0, firstCPU);
-  $monitor ("%g\t clock=%b PC pc=%h  IFID inst=%h IDEX R1=%h R2=%h EXMEM Result=%h WB register=%h data=%h", 
-  	$time, clock, currentPc, instruction_IFID, readData1_IDEX, op2, result_EXMEM, writeRegister_MEMWB, valueToWB);
+  $monitor ("%g\t clock=%b controlBits=%b controlBits[0]=%b", 
+  	$time, clock, controlBits_IDEX, controlBits_IDEX[0]);
   clock = 0;
   rstPc = 1;
   #6 rstPc = 0;
-  #19 $finish;
+  #16 $finish;
 end
 
 // Clock generator
@@ -80,7 +80,7 @@ id_ex id_ex(.inR1(readData1),
 );
 mux32 getOp2ALU(.in1(readData2_IDEX), 
 	.in2(address_IDEX), 
-	.ctrl(controlBits_IDEX[2]), 
+	.ctrl(controlBits_IDEX[5]), 
 	.out(op2)
 );
 alu alu(.op1(readData1_IDEX), 
@@ -91,10 +91,10 @@ alu alu(.op1(readData1_IDEX),
 );
 ex_mem ex_mem(.inResult(result), 
 	.inReadRegister2(readData2_IDEX), 
-	.inMemRead(controlBits_IDEX[5]), 
-	.inMemWrite(controlBits_IDEX[3]), 
-	.inMemToReg(controlBits_IDEX[4]),
-	.inRegWrite(controlBits_IDEX[1]),
+	.inMemRead(controlBits_IDEX[2]), 
+	.inMemWrite(controlBits_IDEX[4]), 
+	.inMemToReg(controlBits_IDEX[3]),
+	.inRegWrite(controlBits_IDEX[6]),
 	.inWriteRegister(writeRegister_IDEX),
 	.clock(clock), 
 	.outResult(result_EXMEM), 

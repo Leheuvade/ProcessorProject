@@ -1,12 +1,12 @@
 module id_ex(inR1, inR2, inAddress, inAluCtrl, inControlBits, inWriteRegister, inPc, clock, outR1, outR2, outAluCtrl, outAddress, outControlBits, outWriteRegister, outPc);
 
 input [31:0]inR1, inR2, inAddress, inPc;
-input [7:0]inControlBits; 
+input [0:8]inControlBits; 
 input [1:0]inAluCtrl;
 input [4:0]inWriteRegister;
 input clock;
 output [31:0]outR1, outR2, outAddress, outPc;
-output [7:0]outControlBits;
+output [0:8]outControlBits;
 output [1:0]outAluCtrl;
 output [4:0]outWriteRegister;
 

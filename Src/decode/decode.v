@@ -9,7 +9,7 @@ input [31:0]instruction, writeData;
 input [4:0]writeRegisterWB;
 input regWrite;
 output [31:0]readData1, readData2, address;
-output [7:0]controlBits;
+output [0:8]controlBits;
 output [1:0]aluCtrl;
 output[4:0]writeRegisterID;
 
@@ -18,11 +18,11 @@ wire readData1, readData2;
 wire address = {16'b0, instruction[15:0]};
 wire aluCtrl;
 wire regWrite;
-wire [7:0]controlBits;
+wire [0:8]controlBits;
 wire writeRegisterID, writeRegisterWB;
 
 control control(.opcode(instruction[31:26]), .controlBits(controlBits));
-mux5 mux(.in1(instruction[20:16]), .in2(instruction[15:11]), .ctrl(controlBits[7]), .out(writeRegisterID));
+mux5 mux(.in1(instruction[20:16]), .in2(instruction[15:11]), .ctrl(controlBits[0]), .out(writeRegisterID));
 file_register file_register(.readRegister1(instruction[25:21]), 
 	.readRegister2(instruction[20:16]), 
 	.writeRegister(writeRegisterWB), 

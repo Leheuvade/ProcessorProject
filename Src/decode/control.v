@@ -1,11 +1,11 @@
 module control (opcode, controlBits);
 
 input [5:0]opcode;
-output [12:0]controlBits;
+output [0:8]controlBits;
 
 wire opcode;
 reg controlBits;
-reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, byte, word;
+reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word;
 always @ (opcode) begin
 case(opcode)
   6'b0 : begin // Opcode 0x0 - ADD
@@ -17,7 +17,6 @@ case(opcode)
       aluSrc = 1'b0;
       regWrite = 1'b1;
       jump = 1'b0;
-      byte = 1'b0;
       word = 1'b0;
             end
   6'b000001 : begin // Opcode 0x1 - SUB
@@ -29,7 +28,6 @@ case(opcode)
       aluSrc = 1'b0;
       regWrite = 1'b1;
       jump = 1'b0;
-      byte = 1'b0;
       word = 1'b0;
             end
   6'b000010 : begin // Opcode 0x2 - MUL
@@ -41,7 +39,6 @@ case(opcode)
       aluSrc = 1'b0;
       regWrite = 1'b1;
       jump = 1'b0;
-      byte = 1'b0;
       word = 1'b0;
             end
   6'b010000 : begin // Opcode 0x10 - LDB: //To sign Extend, to 32 bits in register 
@@ -53,7 +50,6 @@ case(opcode)
       aluSrc = 1'b1;
       regWrite = 1'b1;
       jump = 1'b0;
-      byte = 1'b1;
       word = 1'b0;
     end
   6'b010001 : begin // Opcode 0x11 - LDW
@@ -65,7 +61,6 @@ case(opcode)
       aluSrc = 1'b1;
       regWrite = 1'b1;
       jump = 1'b0;
-      byte = 1'b0;
       word = 1'b1;
             end
   6'b010010 : begin // Opcode 0x12 - STB
@@ -77,7 +72,6 @@ case(opcode)
       aluSrc = 1'b1;
       regWrite = 1'b0;
       jump = 1'b0;
-      byte = 1'b1;
       word = 1'b0;
     end
   6'b010011 : begin // Opcode 0x13 - STW
@@ -89,7 +83,6 @@ case(opcode)
       aluSrc = 1'b1;
       regWrite = 1'b0;
       jump = 1'b0;
-      byte = 1'b0;
       word = 1'b1;
     end
 //PC 
@@ -102,7 +95,6 @@ case(opcode)
       aluSrc = 1'b0;
       regWrite = 1'b0;
       jump = 1'b0;
-      byte = 1'b0;
       word = 1'b0;
     end
   6'b110001 : begin // Opcode 0x31 - JUMP 
@@ -114,14 +106,13 @@ case(opcode)
       aluSrc = 1'b0;
       regWrite = 1'b0;
       jump = 1'b1;
-      byte = 1'b0;
       word = 1'b0;
     end
   default : begin
               $display("@%0dns default is selected, opcode %b",$time,opcode);
             end
 endcase
-controlBits = {regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, opcode, jump, byte, word};
+controlBits = {regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word};
 end
 
 endmodule
