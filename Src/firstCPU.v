@@ -22,7 +22,7 @@ wire zero;
 wire [31:0]result, result_EXMEM, result_MEMWB;
 wire [31:0]address, address_IDEX;
 wire [7:0]controlBits, controlBits_IDEX;
-wire memRead_EXMEM, memWrite_EXMEM, memToReg_EXMEM, memToReg_MEMWB, regWrite_EXMEM, regWrite_MEMWB;
+wire memRead_EXMEM, memWrite_EXMEM, memToReg_EXMEM, memToReg_MEMWB, regWrite_EXMEM, regWrite_MEMWB, byte_EXMEM, word_EXMEM;
 wire [31:0]dataMemory, readData_MEMWB;
 wire [31:0]valueToWB;
 wire [31:0]currentPc, pcIncr, pc_IFID, pc_IDEX;
@@ -42,6 +42,7 @@ end
 always begin
   #2 clock = ~clock;
 end
+
 pc pc(.inPC(pcIncr), .rst(rstPc), .clock(clock), .outPC(currentPc));
 fetch fetch(.pc(currentPc), .instruction(instruction), .newPc(pcIncr));
 if_id if_id(.inInstr(instruction), 
