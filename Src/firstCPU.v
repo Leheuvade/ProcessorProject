@@ -22,7 +22,7 @@ wire zero;
 wire [31:0]result, result_EXMEM, result_MEMWB;
 wire [31:0]address, address_IDEX;
 wire [0:8]controlBits, controlBits_IDEX;
-wire memRead_EXMEM, memWrite_EXMEM, memToReg_EXMEM, memToReg_MEMWB, regWrite_EXMEM, regWrite_MEMWB, byte_EXMEM, word_EXMEM;
+wire memRead_EXMEM, memWrite_EXMEM, memToReg_EXMEM, memToReg_MEMWB, regWrite_EXMEM, regWrite_MEMWB, word_EXMEM;
 wire [31:0]dataMemory, readData_MEMWB;
 wire [31:0]valueToWB;
 wire [31:0]currentPc, pcIncr, pc_IFID, pc_IDEX;
@@ -30,12 +30,12 @@ wire [31:0]currentPc, pcIncr, pc_IFID, pc_IDEX;
 initial begin
   $dumpfile("firstCPU.vcd");
   $dumpvars(0, firstCPU);
-  $monitor ("%g\t clock=%b controlBits=%b controlBits[0]=%b", 
-  	$time, clock, controlBits_IDEX, controlBits_IDEX[0]);
+  $monitor ("%g\t clock=%b", 
+  	$time, clock);
   clock = 0;
   rstPc = 1;
   #6 rstPc = 0;
-  #16 $finish;
+  #18 $finish;
 end
 
 // Clock generator
@@ -95,6 +95,7 @@ ex_mem ex_mem(.inResult(result),
 	.inMemWrite(controlBits_IDEX[4]), 
 	.inMemToReg(controlBits_IDEX[3]),
 	.inRegWrite(controlBits_IDEX[6]),
+	.inWord(controlBits_IDEX[8]),
 	.inWriteRegister(writeRegister_IDEX),
 	.clock(clock), 
 	.outResult(result_EXMEM), 
@@ -103,12 +104,14 @@ ex_mem ex_mem(.inResult(result),
 	.outMemWrite(memWrite_EXMEM),
 	.outMemToReg(memToReg_EXMEM),
 	.outRegWrite(regWrite_EXMEM),
+	.outWord(word_EXMEM),
 	.outWriteRegister(writeRegister_EXMEM)
 );
 data_memory data_memory(.address(result_EXMEM), 
 	.write_data(readData2_EXMEM), 
 	.memRead(memRead_EXMEM), 
 	.memWrite(memWrite_EXMEM), 
+	.word(word_EXMEM),
 	.read_data(dataMemory)
 );
 mem_wb mem_wb(.inResult(result_EXMEM), 

@@ -5,7 +5,7 @@ output [31:0]instruction;
 
 wire address;
 reg instruction;
-reg [7:0] memory [0:18];
+reg [7:0] memory [0:15];
 
 initial begin
  $readmemb("../Resources/instruction_memory.list", memory);
