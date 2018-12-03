@@ -1,7 +1,7 @@
-`include "./decode/control.v"
-`include "./composant/mux5Bits.v"
-`include "./alu/aluControl.v"
-`include "./file_register/file_register.v"
+`include "./genericComponents/mux5Bits.v"
+`include "./stages/decode/components/control.v"
+`include "./stages/decode/components/aluControl.v"
+`include "./stages/decode/components/file_register.v"
 
 module decode(instruction,  writeRegisterWB, writeData, regWrite, address, aluCtrl, controlBits, readData1, readData2, writeRegisterID);
 

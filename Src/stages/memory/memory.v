@@ -1,4 +1,4 @@
-module  data_memory(address, write_data, memRead, memWrite, word, read_data);
+module  memory(address, write_data, memRead, memWrite, word, read_data);
 
 input [31:0]address;
 input [31:0]write_data;

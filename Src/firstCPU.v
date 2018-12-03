@@ -1,13 +1,17 @@
-`include "fetch/fetch.v"
-`include "decode/decode.v"
-`include "alu/alu.v"
+//Include stages modules
+`include "./stages/fetch/fetch.v"
+`include "./stages/decode/decode.v"
+`include "./stages/exec/exec.v"
+`include "./stages/memory/memory.v"
+`include "./stages/wb/wb.v"
+//Include flip flop modules
+`include "./flipflop/pc.v"
 `include "./flipflop/if_id.v"
 `include "./flipflop/id_ex.v"
 `include "./flipflop/ex_mem.v"
 `include "./flipflop/mem_wb.v"
-`include "./flipflop/pc.v"
-`include "./composant/mux32Bits.v"
-`include "./dataMemory/data_memory.v"
+//Include genericComponents
+`include "./genericComponents/mux32Bits.v"
 
 module firstCPU;
 
@@ -43,14 +47,25 @@ always begin
   #2 clock = ~clock;
 end
 
-pc pc(.inPC(pcIncr), .rst(rstPc), .clock(clock), .outPC(currentPc));
+//Flip Flop PC 
+pc pc(.inPC(pcIncr), 
+	.rst(rstPc), 
+	.clock(clock), 
+	.outPC(currentPc)
+);
+
+//Fetch stage 
 fetch fetch(.pc(currentPc), .instruction(instruction), .newPc(pcIncr));
+
+//Flip Flop IF_ID
 if_id if_id(.inInstr(instruction), 
 	.inPc(pcIncr), 
 	.clock(clock), 
 	.outInstr(instruction_IFID), 
 	.outPc(pc_IFID)
 );
+
+//Decode stage 
 decode decode(.instruction(instruction_IFID), 
 	.writeRegisterWB(writeRegister_MEMWB), 
 	.writeData(valueToWB), 
@@ -62,6 +77,8 @@ decode decode(.instruction(instruction_IFID),
 	.readData2(readData2),
 	.writeRegisterID(writeRegister)
 );
+
+//Flip Flop ID_EX
 id_ex id_ex(.inR1(readData1), 
 	.inR2(readData2), 
 	.inAluCtrl(aluCtrl), 
@@ -78,17 +95,18 @@ id_ex id_ex(.inR1(readData1),
 	.outWriteRegister(writeRegister_IDEX), 
 	.outPc(pc_IDEX)
 );
-mux32 getOp2ALU(.in1(readData2_IDEX), 
-	.in2(address_IDEX), 
-	.ctrl(controlBits_IDEX[5]), 
-	.out(op2)
-);
-alu alu(.op1(readData1_IDEX), 
-	.op2(op2), 
+
+//Exec stage
+exec exec(.readData2(readData2_IDEX), 
+	.address(address_IDEX),
+	.ctrlOp2(controlBits_IDEX[5]), 
+	.readData1(readData1_IDEX), 
 	.aluCtrl(aluCtrl_IDEX), 
 	.zero(zero), 
 	.result(result)
 );
+
+//Flip Flop EX_MEM
 ex_mem ex_mem(.inResult(result), 
 	.inReadRegister2(readData2_IDEX), 
 	.inMemRead(controlBits_IDEX[2]), 
@@ -107,13 +125,17 @@ ex_mem ex_mem(.inResult(result),
 	.outWord(word_EXMEM),
 	.outWriteRegister(writeRegister_EXMEM)
 );
-data_memory data_memory(.address(result_EXMEM), 
+
+//Memory stage 
+memory memory(.address(result_EXMEM), 
 	.write_data(readData2_EXMEM), 
 	.memRead(memRead_EXMEM), 
 	.memWrite(memWrite_EXMEM), 
 	.word(word_EXMEM),
 	.read_data(dataMemory)
 );
+
+//Flip Flop MEM_WB
 mem_wb mem_wb(.inResult(result_EXMEM), 
 	.inReadData(dataMemory), 
 	.inWriteRegister(writeRegister_EXMEM), 
@@ -126,9 +148,11 @@ mem_wb mem_wb(.inResult(result_EXMEM),
 	.outMemToReg(memToReg_MEMWB),
 	.outRegWrite(regWrite_MEMWB)
 );
-mux32 getValueToWB(.in1(result_MEMWB), 
-	.in2(readData_MEMWB), 
-	.ctrl(memToReg_MEMWB), 
-	.out(valueToWB)
+
+//Write Back stage
+wb wb(.result(result_MEMWB), 
+	.readData(readData_MEMWB), 
+	.memToReg(memToReg_MEMWB), 
+	.valueToWB(valueToWB)
 );
 endmodule

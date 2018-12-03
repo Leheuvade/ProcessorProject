@@ -1,4 +1,4 @@
-`include "./instructionMemory/instruction_memory.v"
+`include "./stages/fetch/components/instruction_memory.v"
 
 module fetch(pc, instruction, newPc);
 
