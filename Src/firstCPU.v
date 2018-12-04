@@ -19,7 +19,8 @@ reg clock, rstPc;
 wire [31:0]newPc;
 wire [31:0]instruction, instruction_IFID;
 wire [31:0]readData1, readData1_IDEX, readData2, readData2_IDEX, readData2_EXMEM;
-wire [4:0]writeRegister, writeRegister_IDEX, writeRegister_EXMEM, writeRegister_MEMWB;
+wire [4:0]rdRegister, rd_IDEX, rd_EXMEM, rd_MEMWB;
+wire [4:0]rsRegister, rtRegister, rs_IDEX, rt_IDEX;
 wire [31:0]op2;
 wire [1:0]aluCtrl, aluCtrl_IDEX;
 wire zero;
@@ -39,7 +40,7 @@ initial begin
   clock = 0;
   rstPc = 1;
   #6 rstPc = 0;
-  #18 $finish;
+  #22 $finish;
 end
 
 // Clock generator
@@ -67,7 +68,7 @@ if_id if_id(.inInstr(instruction),
 
 //Decode stage 
 decode decode(.instruction(instruction_IFID), 
-	.writeRegisterWB(writeRegister_MEMWB), 
+	.rd_WB(rd_MEMWB), 
 	.writeData(valueToWB), 
 	.regWrite(regWrite_MEMWB),
 	.address(address),  
@@ -75,7 +76,9 @@ decode decode(.instruction(instruction_IFID),
 	.controlBits(controlBits), 
 	.readData1(readData1), 
 	.readData2(readData2),
-	.writeRegisterID(writeRegister)
+	.rdRegister(rdRegister), 
+	.rsRegister(rsRegister),
+	.rtRegister(rtRegister)
 );
 
 //Flip Flop ID_EX
@@ -84,23 +87,35 @@ id_ex id_ex(.inR1(readData1),
 	.inAluCtrl(aluCtrl), 
 	.inAddress(address), 
 	.inControlBits(controlBits), 
-	.inWriteRegister(writeRegister), 
+	.inRd(rdRegister), 
 	.inPc(pc_IFID),
+	.inRs(rsRegister), 
+	.inRt(rtRegister),
 	.clock(clock), 
 	.outR1(readData1_IDEX), 
 	.outR2(readData2_IDEX), 
 	.outAluCtrl(aluCtrl_IDEX), 
 	.outAddress(address_IDEX), 
 	.outControlBits(controlBits_IDEX), 
-	.outWriteRegister(writeRegister_IDEX), 
-	.outPc(pc_IDEX)
+	.outRd(rd_IDEX), 
+	.outPc(pc_IDEX), 
+	.outRs(rs_IDEX),
+	.outRt(rt_IDEX)
 );
 
 //Exec stage
 exec exec(.readData2(readData2_IDEX), 
-	.address(address_IDEX),
-	.ctrlOp2(controlBits_IDEX[5]), 
+	.address(address_IDEX), 
+	.ctrlAluSrc(controlBits_IDEX[5]), 
 	.readData1(readData1_IDEX), 
+	.rs_IDEX(rs_IDEX), 
+	.rt_IDEX(rt_IDEX),
+	.rd_EXMEM(rd_EXMEM),
+	.rd_MEMWB(rd_MEMWB), 
+	.regWrite_EXMEM(regWrite_EXMEM), 
+	.regWrite_MEMWB(regWrite_MEMWB),
+	.result_EXMEM(result_EXMEM), 
+	.valueToWB(valueToWB),
 	.aluCtrl(aluCtrl_IDEX), 
 	.zero(zero), 
 	.result(result)
@@ -114,7 +129,7 @@ ex_mem ex_mem(.inResult(result),
 	.inMemToReg(controlBits_IDEX[3]),
 	.inRegWrite(controlBits_IDEX[6]),
 	.inWord(controlBits_IDEX[8]),
-	.inWriteRegister(writeRegister_IDEX),
+	.inRd(rd_IDEX),
 	.clock(clock), 
 	.outResult(result_EXMEM), 
 	.outReadRegister2(readData2_EXMEM), 
@@ -123,7 +138,7 @@ ex_mem ex_mem(.inResult(result),
 	.outMemToReg(memToReg_EXMEM),
 	.outRegWrite(regWrite_EXMEM),
 	.outWord(word_EXMEM),
-	.outWriteRegister(writeRegister_EXMEM)
+	.outRd(rd_EXMEM)
 );
 
 //Memory stage 
@@ -138,13 +153,13 @@ memory memory(.address(result_EXMEM),
 //Flip Flop MEM_WB
 mem_wb mem_wb(.inResult(result_EXMEM), 
 	.inReadData(dataMemory), 
-	.inWriteRegister(writeRegister_EXMEM), 
+	.inRd(rd_EXMEM), 
 	.inMemToReg(memToReg_EXMEM), 
 	.inRegWrite(regWrite_EXMEM),
 	.clock(clock), 
 	.outResult(result_MEMWB), 
 	.outReadData(readData_MEMWB), 
-	.outWriteRegister(writeRegister_MEMWB), 
+	.outRd(rd_MEMWB), 
 	.outMemToReg(memToReg_MEMWB),
 	.outRegWrite(regWrite_MEMWB)
 );

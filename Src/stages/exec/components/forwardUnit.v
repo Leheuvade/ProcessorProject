@@ -15,20 +15,22 @@ output [1:0]forwardA, forwardB;
 reg [1:0]forwardA, forwardB;
 
 always @(rt_IDEX or rs_IDEX or rd_MEMWB or rd_EXMEM or regWrite_EXMEM or regWrite_MEMWB) begin
-	//MEM hazard
-	if (regWrite_EXMEM == 1&& rd_MEMWB != 0 && rd_MEMWB == rt_IDEX) begin 
+
+	if (regWrite_EXMEM == 1 && rd_EXMEM != 0 && rd_EXMEM == rs_IDEX) begin //EX Hazard
 		forwardA = 2'b10;
-	end else if (regWrite_MEMWB == 1 && rd_MEMWB != 0 && rd_MEMWB == rs_IDEX) begin 
+	end else if (regWrite_MEMWB == 1 && rd_MEMWB != 0 && rd_MEMWB == rs_IDEX) begin //MEM Hazard
 		forwardA = 2'b01;
-	end 
+	end else begin //No Hazard
+		forwardA = 2'b00;
+	end
 
-
-	//WB hazard
-	if (regWrite_EXMEM == 1 && rd_EXMEM != 0  && rd_EXMEM == rt_IDEX) begin 
+	if (regWrite_EXMEM == 1 && rd_EXMEM != 0  && rd_EXMEM == rt_IDEX) begin //EX Hazard
 		forwardB = 2'b10;
-	end else if (regWrite_MEMWB == 1 && rd_MEMWB != 0 && rd_MEMWB == rt_IDEX) begin 
+	end else if (regWrite_MEMWB == 1 && rd_MEMWB != 0 && rd_MEMWB == rt_IDEX) begin //MEM Hazard
 		forwardB = 2'b01;
-	end 
+	end else begin //No Hazard
+		forwardB = 2'b00;
+	end
 end
 
 
