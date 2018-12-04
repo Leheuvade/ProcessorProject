@@ -2,7 +2,6 @@
 `include "./stages/exec/components/forwardUnit.v"
 `include "./genericComponents/mux32Bits3To1.v"
 
-
 module exec(readData2, 
 	address, 
 	ctrlAluSrc, 
