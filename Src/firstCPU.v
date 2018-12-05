@@ -15,7 +15,8 @@
 
 module firstCPU;
 
-reg clock, rstPc;
+reg clock, rstPc, rstIfId;
+wire rstIDEX, pcWrite, if_idWrite;
 wire [31:0]newPc;
 wire [31:0]instruction, instruction_IFID;
 wire [31:0]readData1, readData1_IDEX, readData2, readData2_IDEX, readData2_EXMEM;
@@ -27,7 +28,7 @@ wire zero;
 wire [31:0]result, result_EXMEM, result_MEMWB;
 wire [31:0]address, address_IDEX;
 wire [0:8]controlBits, controlBits_IDEX;
-wire memRead_EXMEM, memWrite_EXMEM, memToReg_EXMEM, memToReg_MEMWB, regWrite_EXMEM, regWrite_MEMWB, word_EXMEM;
+wire memRead_IDEX, memRead_EXMEM, memWrite_EXMEM, memToReg_EXMEM, memToReg_MEMWB, regWrite_EXMEM, regWrite_MEMWB, word_EXMEM;
 wire [31:0]dataMemory, readData_MEMWB;
 wire [31:0]valueToWB;
 wire [31:0]currentPc, pcIncr, pc_IFID, pc_IDEX;
@@ -39,8 +40,9 @@ initial begin
   	$time, clock);
   clock = 0;
   rstPc = 1;
-  #6 rstPc = 0;
-  #22 $finish;
+  rstIfId = 1;
+  #6 rstPc = 0;rstIfId = 0;
+  #26 $finish;
 end
 
 // Clock generator
@@ -51,6 +53,7 @@ end
 //Flip Flop PC 
 pc pc(.inPC(pcIncr), 
 	.rst(rstPc), 
+	.write(pcWrite),
 	.clock(clock), 
 	.outPC(currentPc)
 );
@@ -61,6 +64,8 @@ fetch fetch(.pc(currentPc), .instruction(instruction), .newPc(pcIncr));
 //Flip Flop IF_ID
 if_id if_id(.inInstr(instruction), 
 	.inPc(pcIncr), 
+	.write(if_idWrite),
+	.rst(rstIfId),
 	.clock(clock), 
 	.outInstr(instruction_IFID), 
 	.outPc(pc_IFID)
@@ -71,6 +76,8 @@ decode decode(.instruction(instruction_IFID),
 	.rd_WB(rd_MEMWB), 
 	.writeData(valueToWB), 
 	.regWrite(regWrite_MEMWB),
+	.rt_IDEX(rt_IDEX), 
+	.memRead_IDEX(memRead_IDEX),
 	.address(address),  
 	.aluCtrl(aluCtrl), 
 	.controlBits(controlBits), 
@@ -78,7 +85,10 @@ decode decode(.instruction(instruction_IFID),
 	.readData2(readData2),
 	.rdRegister(rdRegister), 
 	.rsRegister(rsRegister),
-	.rtRegister(rtRegister)
+	.rtRegister(rtRegister), 
+	.pcWrite(pcWrite), 
+	.if_idWrite(if_idWrite), 
+	.rstIDEX(rstIDEX)
 );
 
 //Flip Flop ID_EX
@@ -87,16 +97,19 @@ id_ex id_ex(.inR1(readData1),
 	.inAluCtrl(aluCtrl), 
 	.inAddress(address), 
 	.inControlBits(controlBits), 
+	.inMemRead(controlBits[2]),
 	.inRd(rdRegister), 
 	.inPc(pc_IFID),
 	.inRs(rsRegister), 
 	.inRt(rtRegister),
+	.rst(rstIDEX),
 	.clock(clock), 
 	.outR1(readData1_IDEX), 
 	.outR2(readData2_IDEX), 
 	.outAluCtrl(aluCtrl_IDEX), 
 	.outAddress(address_IDEX), 
 	.outControlBits(controlBits_IDEX), 
+	.outMemRead(memRead_IDEX),
 	.outRd(rd_IDEX), 
 	.outPc(pc_IDEX), 
 	.outRs(rs_IDEX),
@@ -124,7 +137,7 @@ exec exec(.readData2(readData2_IDEX),
 //Flip Flop EX_MEM
 ex_mem ex_mem(.inResult(result), 
 	.inReadRegister2(readData2_IDEX), 
-	.inMemRead(controlBits_IDEX[2]), 
+	.inMemRead(memRead_IDEX), 
 	.inMemWrite(controlBits_IDEX[4]), 
 	.inMemToReg(controlBits_IDEX[3]),
 	.inRegWrite(controlBits_IDEX[6]),

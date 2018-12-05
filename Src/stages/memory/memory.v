@@ -13,7 +13,7 @@ wire memWrite;
 wire memRead;
 wire word;  
 reg read_data;
-reg [7:0] memory [0:13];
+reg [7:0] memory [0:21];
 
 always @(address or memRead or memWrite or write_data) begin 
 	$readmemb("../Resources/data_memory.list", memory);
@@ -28,7 +28,6 @@ always @(address or memRead or memWrite or write_data) begin
 		end
 		$writememb("../Resources/data_memory.list", memory);
 	end else if (memRead == 1'b1) begin
-		$display("address=%h memory=%b", address, memory[address]);
 		if(word == 1'b1) begin
 			read_data = {memory[address + 3], memory[address + 2],  memory[address + 1], memory[address]};
 		end else begin 
