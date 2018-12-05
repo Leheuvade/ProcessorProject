@@ -9,9 +9,9 @@ wire in1, in2, ctrl;
 
 always @(in1 or in2 or ctrl) begin
 	if (ctrl == 1) begin 
-		out <= in2;
+		out = in2;
 	end else begin
-		out <= in1;
+		out = in1;
 	end
 end
 
