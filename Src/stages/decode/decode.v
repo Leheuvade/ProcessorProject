@@ -15,15 +15,10 @@ output [1:0]aluCtrl;
 output[4:0]rdRegister, rsRegister, rtRegister;
 output pcWrite, if_idWrite, rstIDEX;
 
-wire [31:0]instruction;
-wire readData1, readData2;
-wire address = {16'b0, instruction[15:0]};
-wire rsRegister = instruction[25:21];
-wire rtRegister = instruction[20:16];
-wire aluCtrl;
-wire regWrite;
+assign address = {16'b0, instruction[15:0]};
+assign rsRegister = instruction[25:21];
+assign rtRegister = instruction[20:16];
 wire [0:8]controlBits;
-wire rdRegister, rd_WB;
 
 control control(.opcode(instruction[31:26]), .controlBits(controlBits));
 mux5 mux(.in1(instruction[20:16]), .in2(instruction[15:11]), .ctrl(controlBits[0]), .out(rdRegister));

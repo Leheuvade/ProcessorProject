@@ -6,8 +6,6 @@ output zero;
 output [31:0]result;
 
 reg zero, result;
-wire op1, op2;
-wire [1:0]aluCtrl;
 
 always @ (op1 or op2 or aluCtrl) begin
 	if (op1 == op2) begin

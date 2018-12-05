@@ -7,11 +7,6 @@ input memRead; //Control bits
 input word; //to know in case of Load Store if its LDB-STB or LDW-STW
 output [31:0]read_data; //Data read from memory to be written in register 
 
-wire address;
-wire [31:0]write_data;
-wire memWrite;
-wire memRead;
-wire word;  
 reg read_data;
 reg [7:0] memory [0:21];
 

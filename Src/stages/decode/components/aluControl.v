@@ -4,7 +4,6 @@ input [5:0]aluOp;
 output [1:0]aluCtrl;
 
 reg aluCtrl;
-wire aluOp;
 
 always @ (aluOp) //ToFINISH
 case(aluOp)

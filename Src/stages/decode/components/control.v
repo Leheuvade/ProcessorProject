@@ -3,9 +3,9 @@ module control (opcode, controlBits);
 input [5:0]opcode;
 output [0:8]controlBits;
 
-wire opcode;
 reg controlBits;
 reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word;
+
 always @ (opcode) begin
 case(opcode)
   6'b0 : begin // Opcode 0x0 - ADD

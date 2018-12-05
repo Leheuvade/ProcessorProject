@@ -9,4 +9,5 @@ mux32 getValueToWB(.in1(result),
 	.ctrl(memToReg), 
 	.out(valueToWB)
 );
+
 endmodule
