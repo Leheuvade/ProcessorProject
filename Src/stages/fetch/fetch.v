@@ -9,3 +9,4 @@ instruction_memory getInstruction(.address(pc), .instruction(instruction));
 assign newPc = pc + 4;
 
 endmodule
+

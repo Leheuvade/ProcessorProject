@@ -15,7 +15,6 @@ module exec(readData2,
 	result_EXMEM, 
 	valueToWB,
 	aluCtrl, 
-	zero, 
 	result
 );
 
@@ -23,9 +22,10 @@ input [31:0]readData2, address, readData1, result_EXMEM, valueToWB;
 input ctrlAluSrc, regWrite_MEMWB, regWrite_EXMEM;
 input [4:0]rs_IDEX, rt_IDEX, rd_EXMEM, rd_MEMWB;
 input [1:0]aluCtrl;
-output zero;
 output [31:0]result;
+// output rst_IFID, rs_IDEX;
 
+wire zero;
 wire [31:0]aluSrc, op1, op2;
 wire [1:0]forwardA, forwardB;
 
@@ -61,5 +61,6 @@ alu alu(.op1(op1),
 	.zero(zero), 
 	.result(result)
 );
+// branch branch(.branch(), .zero(zero), .address(address), .pcIncr(pc), .newPc(newPc), .rstIFID(rst_IFID), .rstIDEX(rs_IDEX));
 
 endmodule

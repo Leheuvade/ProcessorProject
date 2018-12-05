@@ -1,27 +1,34 @@
-module mem_wb(inResult, inReadData, inRd, inMemToReg, inRegWrite, clock, outResult, outReadData, outRd, outMemToReg, outRegWrite);
+module mem_wb(inResult, 
+	inReadData, 
+	inRd, 
+	inControlBits_EXMEM,
+	clock, 
+	outResult, 
+	outReadData, 
+	outRd, 
+	outMemToReg, 
+	outRegWrite
+);
 
 input [31:0]inResult, inReadData; 
 input [4:0]inRd;
-input inMemToReg, inRegWrite;
+input [0:8]inControlBits_EXMEM;
 input clock;
 output [31:0]outResult, outReadData;
 output [4:0]outRd;
 output outMemToReg, outRegWrite;
 
-wire clock;
-wire inResult, inReadData;
-wire inRd;
-wire inMemToReg, inRegWrite;
+wire [0:8]inControlBits_EXMEM;
 reg outResult, outReadData;
 reg outRd;
 reg outMemToReg, outRegWrite;
 
 always @ (posedge clock)begin 
-  outResult <= inResult;
-  outReadData <= inReadData;
-  outRd <= inRd;
-  outMemToReg <= inMemToReg;
-  outRegWrite <= inRegWrite;
+	outResult <= inResult;
+	outReadData <= inReadData;
+	outRd <= inRd;
+	outMemToReg <= inControlBits_EXMEM[3];
+	outRegWrite <= inControlBits_EXMEM[6];
  end
 
 endmodule
