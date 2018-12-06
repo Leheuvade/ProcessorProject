@@ -110,6 +110,15 @@ case(opcode)
     end
   default : begin
               $display("@%0dns default is selected, opcode %b",$time,opcode);
+      regDst = 1'b0; 
+      branch = 1'b0;
+      memRead = 1'b0;
+      memToReg = 1'b0;
+      memWrite = 1'b0; 
+      aluSrc = 1'b0;
+      regWrite = 1'b0;
+      jump = 1'b0;
+      word = 1'b0;
             end
 endcase
 controlBits = {regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word};

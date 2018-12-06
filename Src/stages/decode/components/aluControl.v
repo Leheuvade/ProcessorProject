@@ -10,6 +10,12 @@ case(aluOp)
   6'b0 : begin // Opcode 0x0 - ADD
         aluCtrl = 2'b00; //ADD
             end
+  6'b1 : begin // Opcode 0x1 - SUB
+        aluCtrl = 2'b10; //ADD
+            end
+  6'b10 : begin // Opcode 0x1 - MUL
+        aluCtrl = 2'b01; //ADD
+            end
   6'b010000 : begin // LDB -> ADD
         aluCtrl = 2'b00;
         end
@@ -22,6 +28,9 @@ case(aluOp)
   6'b010011 : begin //STW -> ADD
         aluCtrl = 2'b00;
         end
+  6'b110000 : begin //BEQ -> SUB
+        aluCtrl = 2'b10;
+      end
   default : begin
               $display("AluControl default case %b", aluOp);
             end

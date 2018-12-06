@@ -1,6 +1,7 @@
 `include "./stages/exec/components/alu.v"
 `include "./stages/exec/components/forwardUnit.v"
 `include "./genericComponents/mux32Bits3To1.v"
+`include "./branch/adderBranch.v"
 
 module exec(readData2, 
 	address, 
@@ -15,19 +16,27 @@ module exec(readData2,
 	result_EXMEM, 
 	valueToWB,
 	aluCtrl, 
-	result
+	branch, 
+	pcIncr, 
+	result, 
+	resultBranch, 
+	flushPrevInstr,
+	pcSrc
 );
 
-input [31:0]readData2, address, readData1, result_EXMEM, valueToWB;
-input ctrlAluSrc, regWrite_MEMWB, regWrite_EXMEM;
+input [31:0]readData2, address, readData1, result_EXMEM, valueToWB, pcIncr;
+input ctrlAluSrc, regWrite_MEMWB, regWrite_EXMEM, branch;
 input [4:0]rs_IDEX, rt_IDEX, rd_EXMEM, rd_MEMWB;
 input [1:0]aluCtrl;
-output [31:0]result;
-// output rst_IFID, rs_IDEX;
+output [31:0]result, resultBranch;
+output pcSrc, flushPrevInstr;
 
 wire zero;
 wire [31:0]aluSrc, op1, op2;
 wire [1:0]forwardA, forwardB;
+
+assign pcSrc = zero && branch;
+assign flushPrevInstr = zero && branch;
 
 mux32 getAluSrc(.in1(readData2), 
 	.in2(address), 
@@ -61,6 +70,8 @@ alu alu(.op1(op1),
 	.zero(zero), 
 	.result(result)
 );
-// branch branch(.branch(), .zero(zero), .address(address), .pcIncr(pc), .newPc(newPc), .rstIFID(rst_IFID), .rstIDEX(rs_IDEX));
-
+adderBranch adder(.address(address), 
+	.pcIncr(pcIncr), 
+	.result(resultBranch)
+);
 endmodule

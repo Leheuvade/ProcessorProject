@@ -5,15 +5,11 @@ input [1:0]aluCtrl;
 output zero;
 output [31:0]result;
 
-reg zero, result;
+reg result;
+
+assign zero = op1 == op2;
 
 always @ (op1 or op2 or aluCtrl) begin
-	if (op1 == op2) begin
-	  zero = 1;
-	end else begin
-		zero = 0;
-	end
-
 	case(aluCtrl)
 	  2'b0 : begin 
 	            result = op1 + op2;

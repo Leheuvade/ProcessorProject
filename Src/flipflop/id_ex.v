@@ -7,7 +7,7 @@ module id_ex(inR1,
 	inPc, 
 	inRs, 
 	inRt, 
-	rst, 
+	flush, 
 	clock, 
 	outR1, 
 	outR2, 
@@ -19,52 +19,47 @@ module id_ex(inR1,
 	outRd,
 	outPc, 
 	outRs, 
-	outRt
+	outRt, 
+	outBranch
 );
 
 input [31:0]inR1, inR2, inAddress, inPc;
 input [0:8]inControlBits; 
 input [1:0]inAluCtrl;
 input [4:0]inRd, inRs, inRt;
-input clock, rst;
+input clock, flush;
 output [31:0]outR1, outR2, outAddress, outPc;
 output [0:8]outControlBits;
 output [1:0]outAluCtrl;
 output [4:0]outRd, outRs, outRt;
-output outAluSrc, outMemRead;
+output outAluSrc, outMemRead, outBranch;
 
 reg outR1, outR2, outAddress, outPc;
 reg outControlBits;
 reg outRt, outRs, outRd;
 reg outAluCtrl;
-reg outAluSrc, outMemRead;
+reg outAluSrc, outMemRead, outBranch;
 
 always @ (posedge clock) begin
-	if (rst) begin
-		outR1 <= 0;
-	  	outR2 <= 0;
-	  	outAluCtrl <= 0;
-		outAddress <= 0;
+	if (flush) begin
 		outControlBits <= 0;
 		outAluSrc <= 0;
-		outRd <= 0;
-		outPc <= 0;
-		outRs <= 0;
-		outRt <= 0;
+		outMemRead <= 0;
+		outBranch <= 0;
 	end else begin 
-		outR1 <= inR1;
-		outR2 <= inR2;
-		outAluCtrl <= inAluCtrl;
-		outAddress <= inAddress;
 		outControlBits <= inControlBits;
 		outAluSrc <= inControlBits[5];
 		outMemRead <= inControlBits[2];
-		outRd <= inRd;
-		outPc <= inPc;
-		outRs <= inRs;
-		outRt <= inRt;
-
+		outBranch <= inControlBits[1];
 	end
+	outR1 <= inR1;
+	outR2 <= inR2;
+	outAddress <= inAddress;
+	outAluCtrl <= inAluCtrl;
+	outRd <= inRd;
+	outPc <= inPc;
+	outRs <= inRs;
+	outRt <= inRt;
 end
 
 endmodule
