@@ -1,7 +1,7 @@
-`include "./stages/exec/components/alu.v"
-`include "./stages/exec/components/forwardUnit.v"
-`include "./genericComponents/mux32Bits3To1.v"
-`include "./branch/adderBranch.v"
+`include "stages/exec/components/alu.v"
+`include "stages/exec/components/forwardUnit.v"
+`include "stages/exec/components/adderBranch.v"
+`include "genericComponents/mux32Bits3To1.v"
 
 module exec(readData2, 
 	address, 

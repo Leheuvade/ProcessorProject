@@ -1,17 +1,17 @@
 //Include stages modules
-`include "./stages/fetch/fetch.v"
-`include "./stages/decode/decode.v"
-`include "./stages/exec/exec.v"
-`include "./stages/memory/memory.v"
-`include "./stages/wb/wb.v"
+`include "stages/fetch/fetch.v"
+`include "stages/decode/decode.v"
+`include "stages/exec/exec.v"
+`include "stages/memory/memory.v"
+`include "stages/wb/wb.v"
 //Include flip flop modules
-`include "./flipflop/pc.v"
-`include "./flipflop/if_id.v"
-`include "./flipflop/id_ex.v"
-`include "./flipflop/ex_mem.v"
-`include "./flipflop/mem_wb.v"
+`include "flipflop/pc.v"
+`include "flipflop/if_id.v"
+`include "flipflop/id_ex.v"
+`include "flipflop/ex_mem.v"
+`include "flipflop/mem_wb.v"
 //Include genericComponents
-`include "./genericComponents/mux32Bits.v"
+`include "genericComponents/mux32Bits.v"
 
 module firstCPU;
 

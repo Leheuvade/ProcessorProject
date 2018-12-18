@@ -1,8 +1,8 @@
-`include "./genericComponents/mux5Bits.v"
-`include "./stages/decode/components/control.v"
-`include "./stages/decode/components/aluControl.v"
-`include "./stages/decode/components/file_register.v"
-`include "./stages/decode/components/hazardDetectionUnit.v"
+`include "genericComponents/mux5Bits.v"
+`include "stages/decode/components/control.v"
+`include "stages/decode/components/aluControl.v"
+`include "stages/decode/components/file_register.v"
+`include "stages/decode/components/hazardDetectionUnit.v"
 
 module decode(instruction, 
 	rd_WB, 
