@@ -45,19 +45,19 @@ pc pc(.rst(rst_PC), .clock(clock));
 fetch fetch();
 
 //Flip Flop IF_ID
-if_id if_id(.rst(rst_IFID), .flush(ex_mem.flushPrevInstr), .clock(clock));
+if_id if_id(.rst(rst_IFID), .clock(clock));
 
 //Decode stage 
 decode decode();
 
 //Flip Flop ID_EX
-id_ex id_ex(.flush(ex_mem.flushPrevInstr), .clock(clock));
+id_ex id_ex(.clock(clock));
 
 //Exec stage
 exec exec();
 
 //Flip Flop EX_MEM
-ex_mem ex_mem(.flush(ex_mem.flushPrevInstr), .clock(clock));
+ex_mem ex_mem(.clock(clock));
 
 //Memory stage 
 memory memory();

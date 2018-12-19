@@ -1,9 +1,8 @@
 module ex_mem( 
-	flush,
 	clock
 );
 
-input clock, inPcSrc, flush;
+input clock, inPcSrc;
 output outFlushPrevInstruction;
 
 reg memWrite, memRead, word, regWrite, pcSrc, flushPrevInstr;
@@ -12,7 +11,7 @@ reg [4:0]rd;
 reg [0:8]controlBits;
 
 always @ (posedge clock) begin
-	if (flush) begin 
+	if (flushPrevInstr) begin 
 		memRead <= 0;
 		controlBits <= 0;
 		memWrite <= 0;

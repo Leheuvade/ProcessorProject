@@ -1,9 +1,8 @@
 module id_ex(
-	flush, 
 	clock
 );
 
-input clock, flush;
+input clock;
 
 reg [31:0]readData1, readData2, address, pc;
 reg [0:8]controlBits;
@@ -12,7 +11,7 @@ reg [1:0]aluCtrl;
 reg aluSrc, memRead, branch;
 
 always @ (posedge clock) begin
-	if (flush) begin
+	if (ex_mem.flushPrevInstr) begin
 		controlBits <= 0;
 		aluSrc <= 0;
 		memRead <= 0;
