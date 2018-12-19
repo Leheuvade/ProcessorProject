@@ -1,6 +1,6 @@
-module wb(valueToWB);
+module wb;
 
-output [31:0]valueToWB; 
+wire [31:0]valueToWB; 
 
 mux32 getValueToWB(.in1(mem_wb.result), 
 	.in2(mem_wb.readData), 

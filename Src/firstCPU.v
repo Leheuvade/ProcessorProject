@@ -111,9 +111,7 @@ if_id if_id(
 );
 
 //Decode stage 
-decode decode(
-	.writeData(valueToWB)
-);
+decode decode();
 
 //Flip Flop ID_EX
 id_ex id_ex(
@@ -122,9 +120,7 @@ id_ex id_ex(
 );
 
 //Exec stage
-exec exec(
-	.valueToWB(valueToWB)
-);
+exec exec();
 
 //Flip Flop EX_MEM
 ex_mem ex_mem( 
@@ -141,7 +137,5 @@ mem_wb mem_wb(
 );
 
 //Write Back stage
-wb wb(
-	.valueToWB(valueToWB)
-);
+wb wb();
 endmodule

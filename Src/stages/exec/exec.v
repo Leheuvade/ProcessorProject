@@ -3,11 +3,7 @@
 `include "stages/exec/components/adderBranch.v"
 `include "genericComponents/mux32Bits3To1.v"
 
-module exec(
-	valueToWB
-);
-
-input [31:0]valueToWB;
+module exec;
 
 wire zero, pcSrc, flushPrevInstr;
 wire [31:0]aluSrc, op1, op2, result, resultBranch;
@@ -31,13 +27,13 @@ forwardUnit forwardUnit(id_ex.rs,
 	forwardB
 );
 mux32Bits3To1 getOp1(.in1(id_ex.readData1), 
-	.in2(valueToWB), 
+	.in2(wb.valueToWB), 
 	.in3(ex_mem.result), 
 	.ctrl(forwardA), 
 	.out(op1)
 );
 mux32Bits3To1 getOp2(.in1(aluSrc), 
-	.in2(valueToWB), 
+	.in2(wb.valueToWB), 
 	.in3(ex_mem.result), 
 	.ctrl(forwardB), 
 	.out(op2)
