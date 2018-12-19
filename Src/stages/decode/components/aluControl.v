@@ -32,7 +32,7 @@ case(aluOp)
         aluCtrl = 2'b10;
       end
   default : begin
-              $display("AluControl default case %b", aluOp);
+              $display("@%0dns AluControl default case %b", $time, aluOp);
             end
 endcase
 

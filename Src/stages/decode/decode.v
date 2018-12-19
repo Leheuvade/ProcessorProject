@@ -15,15 +15,11 @@ wire[4:0]rd, rs, rt;
 assign address = {16'b0, if_id.instruction[15:0]};
 assign rs = if_id.instruction[25:21];
 assign rt = if_id.instruction[20:16];
-
 assign outControlBits = flush_CtrlBits ? 0 : control.controlBits;
 
 control control();
 mux5 mux(.in1(if_id.instruction[20:16]), .in2(if_id.instruction[15:11]), .ctrl(control.regDst), .out(rd));
-hazardDetectionUnit detectHazard(.rs_IFID(rs), 
-	.rt_IFID(rt), 
-	.rt_IDEX(id_ex.rt), 
-	.memRead_IDEX(id_ex.memRead), 
+hazardDetectionUnit detectHazard(
 	.flush_CtrlBits(flush_CtrlBits), 
 	.write_PC(pc.we), 
 	.write_IFID(if_id.we)
