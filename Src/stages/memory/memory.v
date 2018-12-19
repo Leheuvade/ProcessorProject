@@ -1,8 +1,6 @@
-module  memory(read_data);
+module  memory;
 
-output [31:0]read_data; //Data read from memory to be written in register 
-
-reg read_data;
+reg [31:0]readData;
 reg [7:0] memory [0:21];
 wire [31:0]address = ex_mem.result;
 wire [31:0]write_data = ex_mem.readData2;
@@ -24,9 +22,9 @@ always @(address or memRead or memWrite or write_data) begin
 		$writememb("../Resources/data_memory.list", memory);
 	end else if (memRead == 1'b1) begin
 		if(word == 1'b1) begin
-			read_data = {memory[address + 3], memory[address + 2],  memory[address + 1], memory[address]};
+			readData = {memory[address + 3], memory[address + 2],  memory[address + 1], memory[address]};
 		end else begin 
-			read_data = memory[address];
+			readData = memory[address];
 		end
 	end
 end

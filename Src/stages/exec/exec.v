@@ -4,14 +4,12 @@
 `include "genericComponents/mux32Bits3To1.v"
 
 module exec(
-	rd_MEMWB, 
 	regWrite_MEMWB,
 	valueToWB
 );
 
 input [31:0]valueToWB;
 input regWrite_MEMWB;
-input [4:0]rd_MEMWB;
 
 wire zero, pcSrc, flushPrevInstr;
 wire [31:0]aluSrc, op1, op2, result, resultBranch;
@@ -28,7 +26,7 @@ mux32 getAluSrc(.in1(id_ex.readData2),
 forwardUnit forwardUnit(id_ex.rs, 
 	id_ex.rt, 
 	ex_mem.rd, 
-	rd_MEMWB, 
+	mem_wb.rd, 
 	ex_mem.regWrite, 
 	regWrite_MEMWB, 
 	forwardA, 

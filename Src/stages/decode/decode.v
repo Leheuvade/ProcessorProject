@@ -5,13 +5,11 @@
 `include "stages/decode/components/hazardDetectionUnit.v"
 
 module decode(
-	rd_WB, 
 	writeData, 
 	regWrite
 );
 
 input [31:0]writeData;
-input [4:0]rd_WB;
 input regWrite;
 
 wire [0:8]outControlBits;
@@ -41,7 +39,7 @@ hazardDetectionUnit detectHazard(.rs_IFID(rs),
 );
 file_register file_register(.readRegister1(if_id.instruction[25:21]), 
 	.readRegister2(if_id.instruction[20:16]), 
-	.writeRegister(rd_WB), 
+	.writeRegister(mem_wb.rd), 
 	.writeData(writeData), 
 	.regWrite(regWrite), 
 	.readData1(readData1), 

@@ -106,57 +106,45 @@ fetch fetch();
 //Flip Flop IF_ID
 if_id if_id( 
 	.rst(rst_IFID),
-	.flush(flushPrevInstr_EXMEM),
+	.flush(ex_mem.flushPrevInstr),
 	.clock(clock)
 );
 
 //Decode stage 
 decode decode(
-	.rd_WB(rd_MEMWB), 
 	.writeData(valueToWB), 
 	.regWrite(regWrite_MEMWB)
 );
 
 //Flip Flop ID_EX
 id_ex id_ex(
-	.flush(flushPrevInstr_EXMEM),
+	.flush(ex_mem.flushPrevInstr),
 	.clock(clock)
 );
 
 //Exec stage
 exec exec(
-	.rd_MEMWB(rd_MEMWB), 
 	.regWrite_MEMWB(regWrite_MEMWB),
 	.valueToWB(valueToWB)
 );
 
 //Flip Flop EX_MEM
 ex_mem ex_mem( 
-	.flush(flushPrevInstr_EXMEM),
-	.clock(clock), 
-	.outFlushPrevInstruction(flushPrevInstr_EXMEM)
+	.flush(ex_mem.flushPrevInstr),
+	.clock(clock)
 );
 
 //Memory stage 
-memory memory(
-	.read_data(readDataM)
-);
+memory memory();
 
 //Flip Flop MEM_WB
 mem_wb mem_wb(
-	.inReadData(readDataM), 
 	.clock(clock), 
-	.outResult(result_MEMWB), 
-	.outReadData(readDataM_MEMWB), 
-	.outRd(rd_MEMWB), 
-	.outMemToReg(memToReg_MEMWB),
 	.outRegWrite(regWrite_MEMWB)
 );
 
 //Write Back stage
-wb wb(.result(result_MEMWB), 
-	.readData(readDataM_MEMWB), 
-	.memToReg(memToReg_MEMWB), 
+wb wb(
 	.valueToWB(valueToWB)
 );
 endmodule

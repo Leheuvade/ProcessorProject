@@ -1,12 +1,10 @@
-module wb(result, readData, memToReg, valueToWB);
+module wb(valueToWB);
 
-input [31:0]result, readData; 
-input memToReg;
 output [31:0]valueToWB; 
 
-mux32 getValueToWB(.in1(result), 
-	.in2(readData), 
-	.ctrl(memToReg), 
+mux32 getValueToWB(.in1(mem_wb.result), 
+	.in2(mem_wb.readData), 
+	.ctrl(mem_wb.memToReg), 
 	.out(valueToWB)
 );
 
