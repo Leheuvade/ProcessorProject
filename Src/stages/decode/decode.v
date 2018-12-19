@@ -4,59 +4,48 @@
 `include "stages/decode/components/file_register.v"
 `include "stages/decode/components/hazardDetectionUnit.v"
 
-module decode(instruction, 
+module decode(
 	rd_WB, 
 	writeData, 
-	regWrite,
-	rt_IDEX, 
-	memRead_IDEX, 
-	address, 
-	aluCtrl, 
-	outControlBits, 
-	readData1, 
-	readData2, 
-	rdRegister, 
-	rsRegister, 
-	rtRegister, 
-	write_PC, 
-	write_IFID
+	regWrite
 );
 
-input [31:0]instruction, writeData;
-input [4:0]rd_WB, rt_IDEX;
-input regWrite, memRead_IDEX;
-output [31:0]readData1, readData2, address;
-output [0:8]outControlBits;
-output [1:0]aluCtrl;
-output[4:0]rdRegister, rsRegister, rtRegister;
-output write_PC, write_IFID, flush_IDEX;
+input [31:0]writeData;
+input [4:0]rd_WB;
+input regWrite;
 
-assign address = {16'b0, instruction[15:0]};
-assign rsRegister = instruction[25:21];
-assign rtRegister = instruction[20:16];
+wire [0:8]outControlBits;
+wire [1:0]aluCtrl;
+wire [31:0]readData1, readData2, address;
+wire[4:0]rd, rs, rt;
+
+
+assign address = {16'b0, if_id.instruction[15:0]};
+assign rs = if_id.instruction[25:21];
+assign rt = if_id.instruction[20:16];
 wire regDst = controlBits[0];
 wire branch = controlBits[1];
 wire [0:8]controlBits;
 
 assign outControlBits = flush_CtrlBits ? 0 : controlBits;
 
-control control(.opcode(instruction[31:26]), .controlBits(controlBits));
-mux5 mux(.in1(instruction[20:16]), .in2(instruction[15:11]), .ctrl(regDst), .out(rdRegister));
-hazardDetectionUnit detectHazard(.rs_IFID(rsRegister), 
-	.rt_IFID(rtRegister), 
-	.rt_IDEX(rt_IDEX), 
-	.memRead_IDEX(memRead_IDEX), 
+control control(.opcode(if_id.instruction[31:26]), .controlBits(controlBits));
+mux5 mux(.in1(if_id.instruction[20:16]), .in2(if_id.instruction[15:11]), .ctrl(regDst), .out(rd));
+hazardDetectionUnit detectHazard(.rs_IFID(rs), 
+	.rt_IFID(rt), 
+	.rt_IDEX(id_ex.rt), 
+	.memRead_IDEX(id_ex.memRead), 
 	.flush_CtrlBits(flush_CtrlBits), 
-	.write_PC(write_PC), 
-	.write_IFID(write_IFID)
+	.write_PC(pc.we), 
+	.write_IFID(if_id.we)
 );
-file_register file_register(.readRegister1(instruction[25:21]), 
-	.readRegister2(instruction[20:16]), 
+file_register file_register(.readRegister1(if_id.instruction[25:21]), 
+	.readRegister2(if_id.instruction[20:16]), 
 	.writeRegister(rd_WB), 
 	.writeData(writeData), 
 	.regWrite(regWrite), 
 	.readData1(readData1), 
 	.readData2(readData2));
-aluControl aluControl(.aluOp(instruction[31:26]), .aluCtrl(aluCtrl));
+aluControl aluControl(.aluOp(if_id.instruction[31:26]), .aluCtrl(aluCtrl));
 
 endmodule

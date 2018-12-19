@@ -1,15 +1,12 @@
 `include "stages/fetch/components/instruction_memory.v"
 
-module fetch(pc, pcBranch, pcSrc, instruction, pcIncr, newPc);
+module fetch();
 
-input [31:0]pc, pcBranch;
-input pcSrc;
-output [31:0]instruction, newPc, pcIncr;
+wire [31:0]instruction;
+wire [31:0]pcIncr;
+assign pcIncr = pc.pc + 4;
 
-assign pcIncr = pc + 4;
-
-mux32 mux32(.in1(pcIncr), .in2(pcBranch), .ctrl(pcSrc), .out(newPc));
-instruction_memory getInstruction(.address(pc), .instruction(instruction));
+instruction_memory getInstruction(.address(pc.pc), .instruction(instruction));
 
 endmodule
 

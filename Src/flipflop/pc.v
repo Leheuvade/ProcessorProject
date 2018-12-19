@@ -1,18 +1,15 @@
-module pc(inPC, rst, write, clock, outPC);
+module pc(rst, clock);
 
-input [31:0]inPC; 
-input clock, rst, write;
-output [31:0]outPC;
+input clock, rst;
 
-wire clock, rst;
-wire inPC;
-reg outPC;
+wire we;
+reg [31:0]pc;
 
 always @ (posedge clock) begin
 	if (rst) begin
-		outPC <= 0;
-	end else if (write) begin 
-		outPC <= inPC;
+		pc <= 0;
+	end else if (we) begin 
+		pc <= firstCPU.newPc;
 	end
 end
 

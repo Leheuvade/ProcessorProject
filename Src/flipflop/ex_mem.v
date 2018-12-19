@@ -1,7 +1,4 @@
 module ex_mem(inResult, 
-	inReadRegister2, 
-	inControlBits_IDEX, 
-	inRd, 
 	inPcBranch,
 	inPcSrc, 
 	inFlushPrevInstruction,
@@ -20,10 +17,8 @@ module ex_mem(inResult,
 	outFlushPrevInstruction
 );
 
-input [31:0]inResult, inReadRegister2, inPcBranch; 
+input [31:0]inResult, inPcBranch; 
 input clock, inPcSrc, flush, inFlushPrevInstruction;
-input [4:0]inRd;
-input [0:8]inControlBits_IDEX;
 output outMemRead, outMemWrite, outWord, outRegWrite, outPcSrc, outFlushPrevInstruction;
 output [31:0]outResult, outReadRegister2, outPcBranch;
 output [4:0]outRd;
@@ -42,15 +37,15 @@ always @ (posedge clock) begin
 		outWord <= 0;
 		outRegWrite <= 0;
 	end else begin 
-		outMemRead <= inControlBits_IDEX[2];
-		outControlBits_EXMEM <= inControlBits_IDEX;
-		outMemWrite <= inControlBits_IDEX[4];
-		outWord <= inControlBits_IDEX[8];
-		outRegWrite <= inControlBits_IDEX[6];
+		outMemRead <= id_ex.controlBits[2];
+		outControlBits_EXMEM <= id_ex.controlBits;
+		outMemWrite <=  id_ex.controlBits[4];
+		outWord <= id_ex.controlBits[8];
+		outRegWrite <= id_ex.controlBits[6];
 	end 
 	outResult <= inResult;
-	outReadRegister2 <= inReadRegister2;
-	outRd <= inRd;
+	outReadRegister2 <= id_ex.readData2;
+	outRd <= id_ex.rd;
 	outPcBranch <= inPcBranch;
 	outPcSrc <= inPcSrc;
 	outFlushPrevInstruction <= inFlushPrevInstruction;

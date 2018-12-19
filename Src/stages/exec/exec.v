@@ -3,20 +3,13 @@
 `include "stages/exec/components/adderBranch.v"
 `include "genericComponents/mux32Bits3To1.v"
 
-module exec(readData2, 
-	address, 
-	ctrlAluSrc, 
-	readData1, 
-	rs_IDEX, 
-	rt_IDEX,
+module exec(
 	rd_EXMEM,
 	rd_MEMWB, 
 	regWrite_EXMEM, 
 	regWrite_MEMWB,
 	result_EXMEM, 
 	valueToWB,
-	aluCtrl, 
-	branch, 
 	pcIncr, 
 	result, 
 	resultBranch, 
@@ -24,10 +17,9 @@ module exec(readData2,
 	pcSrc
 );
 
-input [31:0]readData2, address, readData1, result_EXMEM, valueToWB, pcIncr;
-input ctrlAluSrc, regWrite_MEMWB, regWrite_EXMEM, branch;
-input [4:0]rs_IDEX, rt_IDEX, rd_EXMEM, rd_MEMWB;
-input [1:0]aluCtrl;
+input [31:0] result_EXMEM, valueToWB, pcIncr;
+input regWrite_MEMWB, regWrite_EXMEM;
+input [4:0]rd_EXMEM, rd_MEMWB;
 output [31:0]result, resultBranch;
 output pcSrc, flushPrevInstr;
 
@@ -35,16 +27,16 @@ wire zero;
 wire [31:0]aluSrc, op1, op2;
 wire [1:0]forwardA, forwardB;
 
-assign pcSrc = zero && branch;
-assign flushPrevInstr = zero && branch;
+assign pcSrc = zero && id_ex.branch;
+assign flushPrevInstr = zero && id_ex.branch;
 
-mux32 getAluSrc(.in1(readData2), 
-	.in2(address), 
-	.ctrl(ctrlAluSrc), 
+mux32 getAluSrc(.in1(id_ex.readData2), 
+	.in2(id_ex.address), 
+	.ctrl(id_ex.aluSrc), 
 	.out(aluSrc)
 );
-forwardUnit forwardUnit(rs_IDEX, 
-	rt_IDEX, 
+forwardUnit forwardUnit(id_ex.rs, 
+	id_ex.rt, 
 	rd_EXMEM, 
 	rd_MEMWB, 
 	regWrite_EXMEM, 
@@ -52,7 +44,7 @@ forwardUnit forwardUnit(rs_IDEX,
 	forwardA, 
 	forwardB
 );
-mux32Bits3To1 getOp1(.in1(readData1), 
+mux32Bits3To1 getOp1(.in1(id_ex.readData1), 
 	.in2(valueToWB), 
 	.in3(result_EXMEM), 
 	.ctrl(forwardA), 
@@ -66,12 +58,12 @@ mux32Bits3To1 getOp2(.in1(aluSrc),
 );
 alu alu(.op1(op1), 
 	.op2(op2), 
-	.aluCtrl(aluCtrl), 
+	.aluCtrl(id_ex.aluCtrl), 
 	.zero(zero), 
 	.result(result)
 );
-adderBranch adder(.address(address), 
-	.pcIncr(pcIncr), 
+adderBranch adder(.address(id_ex.address), 
+	.pcIncr(id_ex.pc), 
 	.result(resultBranch)
 );
 endmodule

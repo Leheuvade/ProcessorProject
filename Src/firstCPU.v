@@ -24,12 +24,8 @@ wire flushPrevInstr;
 wire write_PC;
 reg rst_PC;
 
-//Output PC FF
-wire [31:0]pc_PC;
-
 //Variables used in Fetch stage
-wire [31:0]newPc, pcIncr;
-wire [31:0]instruction;
+wire [31:0]newPc;
 
 //Control Bits IFID FF
 reg rst_IFID;
@@ -96,95 +92,45 @@ always begin
   #2 clock = ~clock;
 end
 
+mux32 mux32(.in1(fetch.pcIncr), .in2(pcBranch_EXMEM), .ctrl(pcSrc_EXMEM), .out(newPc));
+
 //Flip Flop PC 
-pc pc(.inPC(newPc), 
+pc pc(
 	.rst(rst_PC), 
-	.write(write_PC),
-	.clock(clock), 
-	.outPC(pc_PC)
+	.clock(clock)
 );
 
 //Fetch stage 
-fetch fetch(.pc(pc_PC), 
-	.pcBranch(pcBranch_EXMEM), 
-	.pcSrc(pcSrc_EXMEM), 
-	.instruction(instruction), 
-	.pcIncr(pcIncr),
-	.newPc(newPc)
-);
+fetch fetch();
 
 //Flip Flop IF_ID
-if_id if_id(.inInstr(instruction), 
-	.inPc(pcIncr), 
-	.write(write_IFID),
+if_id if_id( 
 	.rst(rst_IFID),
 	.flush(flushPrevInstr_EXMEM),
-	.clock(clock), 
-	.outInstr(instruction_IFID), 
-	.outPc(pc_IFID)
+	.clock(clock)
 );
 
 //Decode stage 
-decode decode(.instruction(instruction_IFID), 
+decode decode(
 	.rd_WB(rd_MEMWB), 
 	.writeData(valueToWB), 
-	.regWrite(regWrite_MEMWB),
-	.rt_IDEX(rt_IDEX), 
-	.memRead_IDEX(memRead_IDEX),
-	.address(address),  
-	.aluCtrl(aluCtrl), 
-	.outControlBits(controlBits), 
-	.readData1(readData1), 
-	.readData2(readData2),
-	.rdRegister(rdRegister), 
-	.rsRegister(rsRegister),
-	.rtRegister(rtRegister), 
-	.write_PC(write_PC), 
-	.write_IFID(write_IFID)
+	.regWrite(regWrite_MEMWB)
 );
 
 //Flip Flop ID_EX
-id_ex id_ex(.inR1(readData1), 
-	.inR2(readData2), 
-	.inAddress(address), 
-	.inAluCtrl(aluCtrl), 
-	.inControlBits(controlBits), 
-	.inRd(rdRegister), 
-	.inPc(pc_IFID),
-	.inRs(rsRegister), 
-	.inRt(rtRegister),
+id_ex id_ex(
 	.flush(flushPrevInstr_EXMEM),
-	.clock(clock), 
-	.outR1(readData1_IDEX), 
-	.outR2(readData2_IDEX), 
-	.outAluCtrl(aluCtrl_IDEX), 
-	.outAddress(address_IDEX), 
-	.outControlBits(controlBits_IDEX), 
-	.outAluSrc(aluSrc_IDEX),
-	.outMemRead(memRead_IDEX),
-	.outRd(rd_IDEX), 
-	.outPc(pc_IDEX), 
-	.outRs(rs_IDEX),
-	.outRt(rt_IDEX),
-	.outBranch(branch_IDEX)
+	.clock(clock)
 );
 
 //Exec stage
-exec exec(.readData2(readData2_IDEX), 
-	.address(address_IDEX), 
-	.ctrlAluSrc(aluSrc_IDEX), 
-	.readData1(readData1_IDEX), 
-	.rs_IDEX(rs_IDEX), 
-	.rt_IDEX(rt_IDEX),
+exec exec(
 	.rd_EXMEM(rd_EXMEM),
 	.rd_MEMWB(rd_MEMWB), 
 	.regWrite_EXMEM(regWrite_EXMEM), 
 	.regWrite_MEMWB(regWrite_MEMWB),
 	.result_EXMEM(result_EXMEM), 
 	.valueToWB(valueToWB),
-	.aluCtrl(aluCtrl_IDEX),
-	.branch(branch_IDEX), 
-	.pcIncr(pc_IDEX),  
 	.result(result), 
 	.resultBranch(pcBranch),
 	.flushPrevInstr(flushPrevInstr),
@@ -193,9 +139,6 @@ exec exec(.readData2(readData2_IDEX),
 
 //Flip Flop EX_MEM
 ex_mem ex_mem(.inResult(result), 
-	.inReadRegister2(readData2_IDEX), 
-	.inControlBits_IDEX(controlBits_IDEX),
-	.inRd(rd_IDEX),
 	.inPcBranch(pcBranch),
 	.inPcSrc(pcSrc),
 	.inFlushPrevInstruction(flushPrevInstr),
