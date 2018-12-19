@@ -2,8 +2,7 @@ module ex_mem(
 	clock
 );
 
-input clock, inPcSrc;
-output outFlushPrevInstruction;
+input clock;
 
 reg memWrite, memRead, word, regWrite, pcSrc, flushPrevInstr;
 reg [31:0]result, readData2, pcBranch; 
