@@ -1,5 +1,4 @@
 module ex_mem( 
-	inPcBranch,
 	inPcSrc, 
 	inFlushPrevInstruction,
 	flush,
@@ -7,7 +6,6 @@ module ex_mem(
 	outFlushPrevInstruction
 );
 
-input [31:0]inPcBranch; 
 input clock, inPcSrc, flush, inFlushPrevInstruction;
 output outFlushPrevInstruction;
 
@@ -33,7 +31,7 @@ always @ (posedge clock) begin
 	result <= exec.result;
 	readData2 <= id_ex.readData2;
 	rd <= id_ex.rd;
-	pcBranch <= inPcBranch;
+	pcBranch <= exec.resultBranch;
 	pcSrc <= inPcSrc;
 	outFlushPrevInstruction <= inFlushPrevInstruction;
 end

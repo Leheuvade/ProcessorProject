@@ -7,7 +7,6 @@ module exec(
 	rd_MEMWB, 
 	regWrite_MEMWB,
 	valueToWB,
-	resultBranch, 
 	flushPrevInstr,
 	pcSrc
 );
@@ -15,11 +14,10 @@ module exec(
 input [31:0]valueToWB;
 input regWrite_MEMWB;
 input [4:0]rd_MEMWB;
-output [31:0]resultBranch;
 output pcSrc, flushPrevInstr;
 
 wire zero;
-wire [31:0]aluSrc, op1, op2, result;
+wire [31:0]aluSrc, op1, op2, result, resultBranch;
 wire [1:0]forwardA, forwardB;
 
 assign pcSrc = zero && id_ex.branch;
