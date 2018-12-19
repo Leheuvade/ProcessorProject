@@ -3,6 +3,7 @@ module aluControl (aluOp, aluCtrl);
 input [5:0]aluOp;
 output [1:0]aluCtrl;
 
+wire [5:0]aluOp = if_id.instruction[31:26];
 reg aluCtrl;
 
 always @ (aluOp) //ToFINISH

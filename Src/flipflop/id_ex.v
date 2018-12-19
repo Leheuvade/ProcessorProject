@@ -17,15 +17,15 @@ always @ (posedge clock) begin
 		memRead <= 0;
 		branch <= 0;
 	end else begin 
-		controlBits <= decode.outControlBits;
-		aluSrc <= decode.outControlBits[5];
-		memRead <= decode.outControlBits[2];
-		branch <= decode.outControlBits[1];
+		controlBits <= decode.controlBits;
+		aluSrc <= decode.controlBits[5];
+		memRead <= decode.controlBits[2];
+		branch <= decode.controlBits[1];
 	end
-	readData1 <= decode.readData1;
-	readData2 <= decode.readData2;
+	readData1 <= decode.file_register.readData1;
+	readData2 <= decode.file_register.readData2;
 	address <= decode.address;
-	aluCtrl <= decode.aluCtrl;
+	aluCtrl <= decode.aluControl.aluCtrl;
 	rd <= decode.rd;
 	pc <= if_id.pc;
 	rs <= decode.rs;
