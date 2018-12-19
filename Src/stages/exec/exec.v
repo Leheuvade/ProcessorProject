@@ -6,16 +6,14 @@
 module exec(
 	rd_MEMWB, 
 	regWrite_MEMWB,
-	valueToWB,
-	flushPrevInstr
+	valueToWB
 );
 
 input [31:0]valueToWB;
 input regWrite_MEMWB;
 input [4:0]rd_MEMWB;
-output flushPrevInstr;
 
-wire zero, pcSrc;
+wire zero, pcSrc, flushPrevInstr;
 wire [31:0]aluSrc, op1, op2, result, resultBranch;
 wire [1:0]forwardA, forwardB;
 

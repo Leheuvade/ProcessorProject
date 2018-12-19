@@ -127,13 +127,11 @@ id_ex id_ex(
 exec exec(
 	.rd_MEMWB(rd_MEMWB), 
 	.regWrite_MEMWB(regWrite_MEMWB),
-	.valueToWB(valueToWB),
-	.flushPrevInstr(flushPrevInstr)
+	.valueToWB(valueToWB)
 );
 
 //Flip Flop EX_MEM
 ex_mem ex_mem( 
-	.inFlushPrevInstruction(flushPrevInstr),
 	.flush(flushPrevInstr_EXMEM),
 	.clock(clock), 
 	.outFlushPrevInstruction(flushPrevInstr_EXMEM)
