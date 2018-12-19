@@ -92,7 +92,7 @@ always begin
   #2 clock = ~clock;
 end
 
-mux32 mux32(.in1(fetch.pcIncr), .in2(pcBranch_EXMEM), .ctrl(pcSrc_EXMEM), .out(newPc));
+mux32 mux32(.in1(fetch.pcIncr), .in2(ex_mem.pcBranch), .ctrl(ex_mem.pcSrc), .out(newPc));
 
 //Flip Flop PC 
 pc pc(
@@ -141,8 +141,6 @@ ex_mem ex_mem(.inResult(result),
 	.inFlushPrevInstruction(flushPrevInstr),
 	.flush(flushPrevInstr_EXMEM),
 	.clock(clock), 
-	.outPcBranch(pcBranch_EXMEM), 
-	.outPcSrc(pcSrc_EXMEM),
 	.outFlushPrevInstruction(flushPrevInstr_EXMEM)
 );
 

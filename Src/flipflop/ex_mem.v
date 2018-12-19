@@ -3,20 +3,16 @@ module ex_mem(inResult,
 	inPcSrc, 
 	inFlushPrevInstruction,
 	flush,
-	clock, 
-	outPcBranch, 
-	outPcSrc, 
+	clock,  
 	outFlushPrevInstruction
 );
 
 input [31:0]inResult, inPcBranch; 
 input clock, inPcSrc, flush, inFlushPrevInstruction;
-output outPcSrc, outFlushPrevInstruction;
-output [31:0] outPcBranch;
+output outFlushPrevInstruction;
 
-reg memWrite, memRead, word, regWrite, outPcSrc, outFlushPrevInstruction;
-reg [31:0]result, readData2; 
-reg outPcBranch;
+reg memWrite, memRead, word, regWrite, pcSrc, outFlushPrevInstruction;
+reg [31:0]result, readData2, pcBranch; 
 reg [4:0]rd;
 reg [0:8]controlBits;
 
@@ -37,8 +33,8 @@ always @ (posedge clock) begin
 	result <= inResult;
 	readData2 <= id_ex.readData2;
 	rd <= id_ex.rd;
-	outPcBranch <= inPcBranch;
-	outPcSrc <= inPcSrc;
+	pcBranch <= inPcBranch;
+	pcSrc <= inPcSrc;
 	outFlushPrevInstruction <= inFlushPrevInstruction;
 end
 
