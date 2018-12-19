@@ -8,7 +8,6 @@ module exec(
 	rd_MEMWB, 
 	regWrite_EXMEM, 
 	regWrite_MEMWB,
-	result_EXMEM, 
 	valueToWB,
 	pcIncr, 
 	result, 
@@ -17,7 +16,7 @@ module exec(
 	pcSrc
 );
 
-input [31:0] result_EXMEM, valueToWB, pcIncr;
+input [31:0]valueToWB, pcIncr;
 input regWrite_MEMWB, regWrite_EXMEM;
 input [4:0]rd_EXMEM, rd_MEMWB;
 output [31:0]result, resultBranch;
@@ -46,13 +45,13 @@ forwardUnit forwardUnit(id_ex.rs,
 );
 mux32Bits3To1 getOp1(.in1(id_ex.readData1), 
 	.in2(valueToWB), 
-	.in3(result_EXMEM), 
+	.in3(ex_mem.result), 
 	.ctrl(forwardA), 
 	.out(op1)
 );
 mux32Bits3To1 getOp2(.in1(aluSrc), 
 	.in2(valueToWB), 
-	.in3(result_EXMEM), 
+	.in3(ex_mem.result), 
 	.ctrl(forwardB), 
 	.out(op2)
 );

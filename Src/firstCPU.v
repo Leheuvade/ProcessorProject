@@ -129,7 +129,6 @@ exec exec(
 	.rd_MEMWB(rd_MEMWB), 
 	.regWrite_EXMEM(regWrite_EXMEM), 
 	.regWrite_MEMWB(regWrite_MEMWB),
-	.result_EXMEM(result_EXMEM), 
 	.valueToWB(valueToWB),
 	.result(result), 
 	.resultBranch(pcBranch),
@@ -144,7 +143,6 @@ ex_mem ex_mem(.inResult(result),
 	.inFlushPrevInstruction(flushPrevInstr),
 	.flush(flushPrevInstr_EXMEM),
 	.clock(clock), 
-	.outResult(result_EXMEM), 
 	.outReadRegister2(readData2_EXMEM), 
 	.outMemRead(memRead_EXMEM), 
 	.outControlBits_EXMEM(controlBits_EXMEM),
@@ -158,7 +156,7 @@ ex_mem ex_mem(.inResult(result),
 );
 
 //Memory stage 
-memory memory(.address(result_EXMEM), 
+memory memory(
 	.write_data(readData2_EXMEM), 
 	.memRead(memRead_EXMEM), 
 	.memWrite(memWrite_EXMEM), 
@@ -167,7 +165,7 @@ memory memory(.address(result_EXMEM),
 );
 
 //Flip Flop MEM_WB
-mem_wb mem_wb(.inResult(result_EXMEM), 
+mem_wb mem_wb(
 	.inReadData(readDataM), 
 	.inRd(rd_EXMEM), 
 	.inControlBits_EXMEM(controlBits_EXMEM),
