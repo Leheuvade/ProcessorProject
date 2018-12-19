@@ -127,7 +127,6 @@ id_ex id_ex(
 exec exec(
 	.rd_EXMEM(rd_EXMEM),
 	.rd_MEMWB(rd_MEMWB), 
-	.regWrite_EXMEM(regWrite_EXMEM), 
 	.regWrite_MEMWB(regWrite_MEMWB),
 	.valueToWB(valueToWB),
 	.result(result), 
@@ -143,8 +142,6 @@ ex_mem ex_mem(.inResult(result),
 	.inFlushPrevInstruction(flushPrevInstr),
 	.flush(flushPrevInstr_EXMEM),
 	.clock(clock), 
-	.outRegWrite(regWrite_EXMEM),
-	.outWord(word_EXMEM),
 	.outRd(rd_EXMEM), 
 	.outPcBranch(pcBranch_EXMEM), 
 	.outPcSrc(pcSrc_EXMEM),
@@ -153,7 +150,6 @@ ex_mem ex_mem(.inResult(result),
 
 //Memory stage 
 memory memory(
-	.word(word_EXMEM),
 	.read_data(readDataM)
 );
 

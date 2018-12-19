@@ -1,6 +1,5 @@
-module  memory(word, read_data);
+module  memory(read_data);
 
-input word; //to know in case of Load Store if its LDB-STB or LDW-STW
 output [31:0]read_data; //Data read from memory to be written in register 
 
 reg read_data;
@@ -9,6 +8,7 @@ wire [31:0]address = ex_mem.result;
 wire [31:0]write_data = ex_mem.readData2;
 wire memRead = ex_mem.memRead;
 wire memWrite = ex_mem.memWrite;
+wire word = ex_mem.word;
 
 always @(address or memRead or memWrite or write_data) begin 
 	$readmemb("../Resources/data_memory.list", memory);

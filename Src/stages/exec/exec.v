@@ -6,7 +6,6 @@
 module exec(
 	rd_EXMEM,
 	rd_MEMWB, 
-	regWrite_EXMEM, 
 	regWrite_MEMWB,
 	valueToWB,
 	pcIncr, 
@@ -17,7 +16,7 @@ module exec(
 );
 
 input [31:0]valueToWB, pcIncr;
-input regWrite_MEMWB, regWrite_EXMEM;
+input regWrite_MEMWB;
 input [4:0]rd_EXMEM, rd_MEMWB;
 output [31:0]result, resultBranch;
 output pcSrc, flushPrevInstr;
@@ -38,7 +37,7 @@ forwardUnit forwardUnit(id_ex.rs,
 	id_ex.rt, 
 	rd_EXMEM, 
 	rd_MEMWB, 
-	regWrite_EXMEM, 
+	ex_mem.regWrite, 
 	regWrite_MEMWB, 
 	forwardA, 
 	forwardB
