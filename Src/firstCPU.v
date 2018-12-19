@@ -128,13 +128,11 @@ exec exec(
 	.rd_MEMWB(rd_MEMWB), 
 	.regWrite_MEMWB(regWrite_MEMWB),
 	.valueToWB(valueToWB),
-	.flushPrevInstr(flushPrevInstr),
-	.pcSrc(pcSrc)
+	.flushPrevInstr(flushPrevInstr)
 );
 
 //Flip Flop EX_MEM
 ex_mem ex_mem( 
-	.inPcSrc(pcSrc),
 	.inFlushPrevInstruction(flushPrevInstr),
 	.flush(flushPrevInstr_EXMEM),
 	.clock(clock), 
