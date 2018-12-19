@@ -143,9 +143,7 @@ ex_mem ex_mem(.inResult(result),
 	.inFlushPrevInstruction(flushPrevInstr),
 	.flush(flushPrevInstr_EXMEM),
 	.clock(clock), 
-	.outMemRead(memRead_EXMEM), 
 	.outControlBits_EXMEM(controlBits_EXMEM),
-	.outMemWrite(memWrite_EXMEM),
 	.outRegWrite(regWrite_EXMEM),
 	.outWord(word_EXMEM),
 	.outRd(rd_EXMEM), 
@@ -156,8 +154,6 @@ ex_mem ex_mem(.inResult(result),
 
 //Memory stage 
 memory memory(
-	.memRead(memRead_EXMEM), 
-	.memWrite(memWrite_EXMEM), 
 	.word(word_EXMEM),
 	.read_data(readDataM)
 );
