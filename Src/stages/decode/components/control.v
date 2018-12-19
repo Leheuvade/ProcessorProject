@@ -1,10 +1,8 @@
-module control (opcode, controlBits);
+module control;
 
-input [5:0]opcode;
-output [0:8]controlBits;
-
-reg controlBits;
+reg [0:8]controlBits;
 reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word;
+wire [5:0]opcode = if_id.instruction[31:26];
 
 always @ (opcode) begin
 case(opcode)
