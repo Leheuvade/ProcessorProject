@@ -17,25 +17,17 @@ mux32 getAluSrc(.in1(id_ex.readData2),
 	.ctrl(id_ex.aluSrc), 
 	.out(aluSrc)
 );
-forwardUnit forwardUnit(id_ex.rs, 
-	id_ex.rt, 
-	ex_mem.rd, 
-	mem_wb.rd, 
-	ex_mem.regWrite, 
-	mem_wb.regWrite, 
-	forwardA, 
-	forwardB
-);
+forwardUnit forwardUnit();
 mux32Bits3To1 getOp1(.in1(id_ex.readData1), 
 	.in2(wb.valueToWB), 
 	.in3(ex_mem.result), 
-	.ctrl(forwardA), 
+	.ctrl(forwardUnit.forwardA), 
 	.out(op1)
 );
 mux32Bits3To1 getOp2(.in1(aluSrc), 
 	.in2(wb.valueToWB), 
 	.in3(ex_mem.result), 
-	.ctrl(forwardB), 
+	.ctrl(forwardUnit.forwardB), 
 	.out(op2)
 );
 alu alu(.op1(op1), 

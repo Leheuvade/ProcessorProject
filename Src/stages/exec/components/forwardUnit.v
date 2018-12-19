@@ -1,32 +1,20 @@
-module forwardUnit(rs_IDEX, 
-	rt_IDEX, 
-	rd_EXMEM, 
-	rd_MEMWB, 
-	regWrite_EXMEM, 
-	regWrite_MEMWB, 
-	forwardA, 
-	forwardB
-);
-
-input [4:0]rs_IDEX, rt_IDEX, rd_EXMEM, rd_MEMWB;
-input regWrite_EXMEM, regWrite_MEMWB;
-output [1:0]forwardA, forwardB;
+module forwardUnit();
 
 reg [1:0]forwardA, forwardB;
 
-always @(rt_IDEX or rs_IDEX or rd_MEMWB or rd_EXMEM or regWrite_EXMEM or regWrite_MEMWB) begin
+always @(id_ex.rt or id_ex.rs or mem_wb.rd or ex_mem.rd or ex_mem.regWrite or mem_wb.regWrite) begin
 
-	if (regWrite_EXMEM == 1 && rd_EXMEM != 0 && rd_EXMEM == rs_IDEX) begin //EX Hazard
+	if (ex_mem.regWrite == 1 && ex_mem.rd != 0 && ex_mem.rd == id_ex.rs) begin //EX Hazard
 		forwardA = 2'b10;
-	end else if (regWrite_MEMWB == 1 && rd_MEMWB != 0 && rd_MEMWB == rs_IDEX) begin //MEM Hazard
+	end else if (mem_wb.regWrite == 1 && mem_wb.rd != 0 && mem_wb.rd == id_ex.rs) begin //MEM Hazard
 		forwardA = 2'b01;
 	end else begin //No Hazard
 		forwardA = 2'b00;
 	end
 
-	if (regWrite_EXMEM == 1 && rd_EXMEM != 0  && rd_EXMEM == rt_IDEX) begin //EX Hazard
+	if (ex_mem.regWrite == 1 && ex_mem.rd != 0  && ex_mem.rd == id_ex.rt) begin //EX Hazard
 		forwardB = 2'b10;
-	end else if (regWrite_MEMWB == 1 && rd_MEMWB != 0 && rd_MEMWB == rt_IDEX) begin //MEM Hazard
+	end else if (mem_wb.regWrite == 1 && mem_wb.rd != 0 && mem_wb.rd == id_ex.rt) begin //MEM Hazard
 		forwardB = 2'b01;
 	end else begin //No Hazard
 		forwardB = 2'b00;
