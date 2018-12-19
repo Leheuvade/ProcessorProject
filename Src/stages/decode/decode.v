@@ -23,8 +23,6 @@ hazardDetectionUnit detectHazard(
 	.flush_CtrlBits(flush_CtrlBits)
 );
 file_register file_register(
-	.writeData(wb.valueToWB), 
-	.regWrite(mem_wb.regWrite), 
 	.readData1(readData1), 
 	.readData2(readData2)
 );
