@@ -4,7 +4,6 @@ module ex_mem(inResult,
 	inFlushPrevInstruction,
 	flush,
 	clock, 
-	outControlBits_EXMEM, 
 	outRegWrite,
 	outWord,
 	outRd, 
@@ -18,24 +17,23 @@ input clock, inPcSrc, flush, inFlushPrevInstruction;
 output outWord, outRegWrite, outPcSrc, outFlushPrevInstruction;
 output [31:0] outPcBranch;
 output [4:0]outRd;
-output [0:8]outControlBits_EXMEM;
 
 reg memWrite, memRead, outWord, outRegWrite, outPcSrc, outFlushPrevInstruction;
 reg [31:0]result, readData2; 
 reg outPcBranch;
 reg outRd;
-reg outControlBits_EXMEM;
+reg [0:8]controlBits;
 
 always @ (posedge clock) begin
 	if (flush) begin 
 		memRead <= 0;
-		outControlBits_EXMEM <= 0;
+		controlBits <= 0;
 		memWrite <= 0;
 		outWord <= 0;
 		outRegWrite <= 0;
 	end else begin 
 		memRead <= id_ex.controlBits[2];
-		outControlBits_EXMEM <= id_ex.controlBits;
+		controlBits <= id_ex.controlBits;
 		memWrite <=  id_ex.controlBits[4];
 		outWord <= id_ex.controlBits[8];
 		outRegWrite <= id_ex.controlBits[6];

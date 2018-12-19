@@ -162,7 +162,6 @@ memory memory(
 mem_wb mem_wb(
 	.inReadData(readDataM), 
 	.inRd(rd_EXMEM), 
-	.inControlBits_EXMEM(controlBits_EXMEM),
 	.clock(clock), 
 	.outResult(result_MEMWB), 
 	.outReadData(readDataM_MEMWB), 
