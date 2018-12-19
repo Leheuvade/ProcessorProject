@@ -20,17 +20,14 @@ assign outControlBits = flush_CtrlBits ? 0 : control.controlBits;
 control control();
 mux5 mux(.in1(if_id.instruction[20:16]), .in2(if_id.instruction[15:11]), .ctrl(control.regDst), .out(rd));
 hazardDetectionUnit detectHazard(
-	.flush_CtrlBits(flush_CtrlBits), 
-	.write_PC(pc.we), 
-	.write_IFID(if_id.we)
+	.flush_CtrlBits(flush_CtrlBits)
 );
-file_register file_register(.readRegister1(if_id.instruction[25:21]), 
-	.readRegister2(if_id.instruction[20:16]), 
-	.writeRegister(mem_wb.rd), 
+file_register file_register(
 	.writeData(wb.valueToWB), 
 	.regWrite(mem_wb.regWrite), 
 	.readData1(readData1), 
-	.readData2(readData2));
+	.readData2(readData2)
+);
 aluControl aluControl(.aluOp(if_id.instruction[31:26]), .aluCtrl(aluCtrl));
 
 endmodule

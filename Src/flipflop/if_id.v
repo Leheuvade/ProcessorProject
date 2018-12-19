@@ -2,7 +2,7 @@ module if_id(rst, clock);
 
 input clock, rst;
 
-wire we;
+reg we;
 reg [31:0]instruction, pc;
 
 always @ (posedge clock) begin

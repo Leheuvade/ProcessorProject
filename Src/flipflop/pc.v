@@ -2,7 +2,7 @@ module pc(rst, clock);
 
 input clock, rst;
 
-wire we;
+reg we;
 reg [31:0]pc;
 wire [31:0]newPc;
 

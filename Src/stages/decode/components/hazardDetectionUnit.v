@@ -1,17 +1,17 @@
-module hazardDetectionUnit(flush_CtrlBits, write_PC, write_IFID);
+module hazardDetectionUnit(flush_CtrlBits);
 
-output flush_CtrlBits, write_PC, write_IFID;
+output flush_CtrlBits;
 
-reg write_IFID, write_PC, flush_CtrlBits;
+reg flush_CtrlBits;
 
 always @(decode.rs or decode.rt or id_ex.rt or id_ex.memRead) begin
 	flush_CtrlBits = 0;
-	write_PC = 1; 
-	write_IFID = 1;
+	pc.we = 1; 
+	if_id.we = 1;
 	if (id_ex.memRead == 1 && (decode.rs == id_ex.rt || decode.rt == id_ex.rt)) begin 
 		flush_CtrlBits = 1;
-		write_PC = 0; 
-		write_IFID = 0;
+		pc.we = 0; 
+		if_id.we = 0;
 	end
 end
 
