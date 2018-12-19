@@ -125,7 +125,6 @@ id_ex id_ex(
 
 //Exec stage
 exec exec(
-	.rd_EXMEM(rd_EXMEM),
 	.rd_MEMWB(rd_MEMWB), 
 	.regWrite_MEMWB(regWrite_MEMWB),
 	.valueToWB(valueToWB),
@@ -142,7 +141,6 @@ ex_mem ex_mem(.inResult(result),
 	.inFlushPrevInstruction(flushPrevInstr),
 	.flush(flushPrevInstr_EXMEM),
 	.clock(clock), 
-	.outRd(rd_EXMEM), 
 	.outPcBranch(pcBranch_EXMEM), 
 	.outPcSrc(pcSrc_EXMEM),
 	.outFlushPrevInstruction(flushPrevInstr_EXMEM)
@@ -156,7 +154,6 @@ memory memory(
 //Flip Flop MEM_WB
 mem_wb mem_wb(
 	.inReadData(readDataM), 
-	.inRd(rd_EXMEM), 
 	.clock(clock), 
 	.outResult(result_MEMWB), 
 	.outReadData(readDataM_MEMWB), 
