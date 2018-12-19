@@ -5,12 +5,10 @@
 `include "stages/decode/components/hazardDetectionUnit.v"
 
 module decode(
-	writeData, 
-	regWrite
+	writeData
 );
 
 input [31:0]writeData;
-input regWrite;
 
 wire [0:8]outControlBits;
 wire [1:0]aluCtrl;
@@ -41,7 +39,7 @@ file_register file_register(.readRegister1(if_id.instruction[25:21]),
 	.readRegister2(if_id.instruction[20:16]), 
 	.writeRegister(mem_wb.rd), 
 	.writeData(writeData), 
-	.regWrite(regWrite), 
+	.regWrite(mem_wb.regWrite), 
 	.readData1(readData1), 
 	.readData2(readData2));
 aluControl aluControl(.aluOp(if_id.instruction[31:26]), .aluCtrl(aluCtrl));

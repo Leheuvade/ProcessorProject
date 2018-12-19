@@ -112,8 +112,7 @@ if_id if_id(
 
 //Decode stage 
 decode decode(
-	.writeData(valueToWB), 
-	.regWrite(regWrite_MEMWB)
+	.writeData(valueToWB)
 );
 
 //Flip Flop ID_EX
@@ -124,7 +123,6 @@ id_ex id_ex(
 
 //Exec stage
 exec exec(
-	.regWrite_MEMWB(regWrite_MEMWB),
 	.valueToWB(valueToWB)
 );
 
@@ -139,8 +137,7 @@ memory memory();
 
 //Flip Flop MEM_WB
 mem_wb mem_wb(
-	.clock(clock), 
-	.outRegWrite(regWrite_MEMWB)
+	.clock(clock)
 );
 
 //Write Back stage

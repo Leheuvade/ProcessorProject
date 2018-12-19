@@ -4,12 +4,10 @@
 `include "genericComponents/mux32Bits3To1.v"
 
 module exec(
-	regWrite_MEMWB,
 	valueToWB
 );
 
 input [31:0]valueToWB;
-input regWrite_MEMWB;
 
 wire zero, pcSrc, flushPrevInstr;
 wire [31:0]aluSrc, op1, op2, result, resultBranch;
@@ -28,7 +26,7 @@ forwardUnit forwardUnit(id_ex.rs,
 	ex_mem.rd, 
 	mem_wb.rd, 
 	ex_mem.regWrite, 
-	regWrite_MEMWB, 
+	mem_wb.regWrite, 
 	forwardA, 
 	forwardB
 );
