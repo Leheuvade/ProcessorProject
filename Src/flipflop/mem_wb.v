@@ -12,8 +12,8 @@ always @ (posedge clock)begin
 	result <= ex_mem.result;
 	readData <= memory.readData;
 	rd <= ex_mem.rd;
-	memToReg <= ex_mem.controlBits[3];
-	regWrite <= ex_mem.controlBits[6];
+	memToReg <= ex_mem.memToReg;
+	regWrite <= ex_mem.regWrite;
  end
 
 endmodule

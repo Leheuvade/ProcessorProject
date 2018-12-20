@@ -6,14 +6,21 @@
 
 module decode;
 
-wire [0:8]controlBits;
 wire [31:0]address;
 wire[4:0]rd, rs, rt;
 
 assign address = {16'b0, if_id.instruction[15:0]};
 assign rs = if_id.instruction[25:21];
 assign rt = if_id.instruction[20:16];
-assign controlBits = flush_CtrlBits ? 0 : control.controlBits;
+assign regDst = control.regDst;
+assign branch = control.branch;
+assign memRead = control.memRead;
+assign memToReg = control.memToReg;
+assign memWrite = control.memWrite;
+assign aluSrc = control.aluSrc;
+assign regWrite = control.regWrite;
+assign jump = control.jump;
+assign word = control.word;
 
 control control();
 mux5 mux(.in1(if_id.instruction[20:16]), .in2(if_id.instruction[15:11]), .ctrl(control.regDst), .out(rd));

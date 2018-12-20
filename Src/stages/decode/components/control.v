@@ -1,10 +1,20 @@
 module control;
 
-reg [0:8]controlBits;
 reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word;
 wire [5:0]opcode = if_id.instruction[31:26];
 
 always @ (opcode) begin
+if (decode.flush_CtrlBits) begin
+      regDst = 1'b0; 
+      branch = 1'b0;
+      memRead = 1'b0;
+      memToReg = 1'b0;
+      memWrite = 1'b0; 
+      aluSrc = 1'b0;
+      regWrite = 1'b0;
+      jump = 1'b0;
+      word = 1'b0;
+end else begin
 case(opcode)
   6'b0 : begin // Opcode 0x0 - ADD
       regDst = 1'b1; 
@@ -97,7 +107,7 @@ case(opcode)
     end
   6'b110001 : begin // Opcode 0x31 - JUMP 
       regDst = 1'b0; 
-      branch = 1'b1;
+      branch = 1'b0;
       memRead = 1'b0;
       memToReg = 1'b0;
       memWrite = 1'b0; 
@@ -119,7 +129,7 @@ case(opcode)
       word = 1'b0;
             end
 endcase
-controlBits = {regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word};
+end
 end
 
 endmodule
