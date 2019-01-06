@@ -17,7 +17,7 @@ module memory_arbiter(
 		      output wire 		   d_cache_ready);
 
    parameter LINE_WIDTH = 'LINE_WIDTH;
-   parameter ADDR_SIZE = ('PHYS_MEM_SIZE - 3); // Address Granularity = byte
+   parameter ADDR_SIZE = 'PHYS_ADDR_SIZE;
    
    wire 					   reset;
    

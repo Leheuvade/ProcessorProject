@@ -19,7 +19,7 @@ module memory(
 	      input wire 		   reset);
    
    parameter LINE_WIDTH = 'LINE_WIDTH;
-   parameter ADDR_SIZE = ('PHYS_MEM_SIZE - 3); // Address Granularity = byte
+   parameter ADDR_SIZE = 'PHYS_ADDR_SIZE;
    parameter LATENCY = 'MEMORY_LATENCY;
    parameter MEMORY_CONTENT = 'MEMORY_CONTENT;
 
