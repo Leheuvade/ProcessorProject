@@ -2,11 +2,10 @@ module if_id(rst, clock);
 
 input clock, rst;
 
-reg we;
-wire flush;
+reg we = ~stall_control.stall_at_decode;
+wire flush = stall_control.bubble_at_decode;
 reg [31:0]instruction, pc, pcJump;
 	
-assign flush = ex_mem.flushPrevInstr || decode.jump;
 always @ (posedge clock) begin
 	if (rst || flush) begin
 		instruction <= 32'bx00000000000000000000000000;

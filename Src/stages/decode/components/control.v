@@ -4,7 +4,7 @@ reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word;
 wire [5:0]opcode = if_id.instruction[31:26];
 
 always @ (opcode) begin
-if (decode.flush_CtrlBits) begin
+if (decode.flush_CtrlBits) begin // TODO : remove ce flush car ça équivaut à une bubble
       regDst = 1'b0; 
       branch = 1'b0;
       memRead = 1'b0;
