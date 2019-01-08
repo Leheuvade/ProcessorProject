@@ -6,8 +6,12 @@
 module exec;
 
 wire zero, pcSrc, flushPrevInstr;
-wire [31:0]aluSrc, op1, op2, result, resultBranch;
-wire [1:0]forwardA, forwardB;
+   wire [31:0] aluSrc;
+   wire [31:0] op1;
+   wire [31:0] op2;
+   wire [31:0] result;
+   wire [31:0] resultBranch;
+   wire [1:0]forwardA, forwardB;
 
 assign pcSrc = zero && id_ex.branch;
 assign flushPrevInstr = zero && id_ex.branch;

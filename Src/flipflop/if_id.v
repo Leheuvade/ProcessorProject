@@ -2,7 +2,7 @@ module if_id(rst, clock);
 
 input clock, rst;
 
-reg we = ~stall_control.stall_at_decode;
+wire we = !stall_control.stall_at_decode;
 wire flush = stall_control.bubble_at_decode;
 reg [31:0]instruction, pc, pcJump;
 	

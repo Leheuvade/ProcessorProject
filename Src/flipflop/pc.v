@@ -2,7 +2,7 @@ module pc(rst, clock);
 
 input clock, rst;
 
-reg we = ~stall_control.stall_at_fetch;
+wire we = ~stall_control.stall_at_fetch;
 reg [31:0]pc;
 wire [31:0]intermediatePc, finalPc;
 

@@ -12,6 +12,9 @@
 `include "flipflop/mem_wb.v"
 //Include genericComponents
 `include "genericComponents/mux32Bits.v"
+//Include memory_arbiter and stall_control
+`include "memory/memory_arbiter.v"
+`include "stall_control/stall_control.v"
 
 module firstCPU;
 
@@ -63,7 +66,7 @@ pc pc(.rst(rst_PC), .clock(clock));
 			       );
 
    //Memory arbiter
-   wire d_cache_enable = d_cache_miss or enable_write_from_d_cache_to_memory;
+   wire d_cache_enable = d_cache_miss || enable_write_from_d_cache_to_memory;
    wire d_cache_write_or_read = enable_write_from_d_cache_to_memory? `WRITE : `READ;
    wire d_cache_ready;
    memory_arbiter memory_arbiter(
@@ -86,19 +89,19 @@ pc pc(.rst(rst_PC), .clock(clock));
 //Fetch stage
 
    wire instruction_hot_and_ready;
-   wire from_memory_to_i_cache_data
+   wire [`LINE_WIDTH-1:0] from_memory_to_i_cache_data;
    wire enable_write_from_memory_to_i_cache;
    wire instruction_not_ready = ~instruction_hot_and_ready;
    
    fetch fetch( // Input for memory_arbiter and stall_control
 		.from_memory_to_cache_data(from_memory_to_i_cache_data),
-		.enable_write_from_memory_to_cache(enable_write_from_memory_to_i_cache)
+		.enable_write_from_memory_to_cache(enable_write_from_memory_to_i_cache),
 		
 		// TODO : faudra peut-être les set
 		.instruction(),
  		.pcIncr(),
  		.pcJump(),
-		.instruction_hot_and_ready(instruction_hot_and_ready),
+		.instruction_hot_and_ready(instruction_hot_and_ready)
 		);
 
 //Flip Flop IF_ID
@@ -118,13 +121,13 @@ ex_mem ex_mem(.clock(clock));
 
 //Memory stage
    wire data_hot_and_ready;
-   wire from_memory_to_d_cache_data;
+   wire [`LINE_WIDTH-1:0] from_memory_to_d_cache_data;
    wire completed_write_from_d_cache_to_memory = d_cache_ready && enable_write_from_d_cache_to_memory;
    wire enable_write_from_memory_to_d_cache = d_cache_ready && (d_cache_write_or_read==`READ);
    wire enable_write_from_d_cache_to_memory;
    wire d_cache_miss;
-   wire from_d_cache_to_memory_address;
-   wire from_d_cache_to_memory_out_data;
+   wire [`PHYS_ADDR_SIZE-1:0] from_d_cache_to_memory_address;
+   wire [`LINE_WIDTH-1:0] from_d_cache_to_memory_out_data;
    
    memory_stage memory(
 		       .clock(clock),
@@ -141,7 +144,7 @@ ex_mem ex_mem(.clock(clock));
 		       .enable_write_from_cache_to_memory(enable_write_from_d_cache_to_memory),
 		       .cache_miss(d_cache_miss),
 		       .to_memory_address(from_d_cache_to_memory_address),
-		       .to_memory_out_data(from_d_cache_to_memory_out_data),
+		       .to_memory_out_data(from_d_cache_to_memory_out_data)
 		       );
 
 //Flip Flop MEM_WB

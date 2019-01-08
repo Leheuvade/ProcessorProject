@@ -15,8 +15,8 @@ module  memory_stage(
 		     // Output for memory_arbiter and stall_control
 		     output wire 		  enable_write_from_cache_to_memory,
 		     output wire 		  cache_miss,
-		     output wire [ADDR_SIZE-1:0]  to_memory_address,
-		     output wire [LINE_WIDTH-1:0] to_memory_out_data,
+		     output wire [`PHYS_ADDR_SIZE-1:0]  to_memory_address,
+		     output wire [`LINE_WIDTH-1:0] to_memory_out_data
 		     );
 
    // Input from previous stage 
@@ -28,11 +28,11 @@ module  memory_stage(
 
    wire [`LINE_WIDTH-1:0] 			  cache_out_data;
    wire 					  offset = address[`LINE_ADDR_START_INDEX-1:0] << 3;
-   wire 					  enable = memRead or memWrite;
+   wire 					  enable = memRead || memWrite;
    wire 					  write_or_read = memWrite? `WRITE : `READ;
    wire 					  data_length = word? `WORD_SIZE : `BYTE_SIZE;
    
-   assign readData = cache_out_data[offset+data_length-1:offset];
+   assign readData = cache_out_data >> offset;
    
    cache d_cache(
 	     	 .clock(clock),
@@ -57,7 +57,7 @@ module  memory_stage(
    
    always@(*) begin
       if(offset+data_length > `LINE_WIDTH) begin
-	 `CERR("[memory] Unaligned is not supported yet : address %x, offset %x, data_length %x !", address, offset, data_length);
+	 `CERR(("[memory] Unaligned is not supported yet : address %x, offset %x, data_length %x !", address, offset, data_length))
 	 $finish;
       end
    end

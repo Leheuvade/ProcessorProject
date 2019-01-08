@@ -1,11 +1,11 @@
 `include "memory/preprocessor_directives.v"
-`include "./memory.v"
+`include "memory/memory.v"
 
 module memory_arbiter(
 		      // i_cache interface
 		      input wire [ADDR_SIZE-1:0]   i_cache_address,
 		      input wire 		   i_cache_enable,
-		      output wire [LINE_WIDTH-1:0] i_cache_out_data = 0,
+		      output wire [LINE_WIDTH-1:0] i_cache_out_data,
 		      output wire 		   i_cache_ready, 
 
 		      // d_cache interface
@@ -13,13 +13,13 @@ module memory_arbiter(
 		      input wire [LINE_WIDTH-1:0]  d_cache_in_data,
 		      input wire 		   d_cache_write_or_read,
 		      input wire 		   d_cache_enable,
-		      output wire [LINE_WIDTH-1:0] d_cache_out_data = 0,
+		      output wire [LINE_WIDTH-1:0] d_cache_out_data,
 		      output wire 		   d_cache_ready);
 
    parameter LINE_WIDTH = `LINE_WIDTH;
    parameter ADDR_SIZE = `PHYS_ADDR_SIZE;
    
-   wire 					   reset;
+   reg					   reset;
    
    memory memory(
 		 .p1_read_address(i_cache_address),

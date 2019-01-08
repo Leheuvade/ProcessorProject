@@ -1,6 +1,7 @@
 module alu (op1, op2, aluCtrl, zero, result);
 
-input [31:0]op1, op2;
+   input [31:0] op1;
+   input [31:0] op2;
 input [1:0]aluCtrl;
 output zero;
 output [31:0]result;

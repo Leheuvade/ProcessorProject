@@ -3,12 +3,12 @@
 
 module fetch(// Input for memory_arbiter and stall_control
 	     input wire [`LINE_WIDTH-1:0] from_memory_to_cache_data,
-	     input wire 		  enable_write_from_memory_to_cache
+	     input wire 		  enable_write_from_memory_to_cache,
 	     
 	     output wire [31:0] 	  instruction,
 	     output wire [31:0] 	  pcIncr,
 	     output wire [31:0] 	  pcJump,
-	     output wire 		  instruction_hot_and_ready,
+	     output wire 		  instruction_hot_and_ready
 	     );
 
    
@@ -19,7 +19,7 @@ module fetch(// Input for memory_arbiter and stall_control
    // TODO : input
    wire 			offset = pc.pc[`LINE_ADDR_START_INDEX-1:0] << 3;
    
-   assign instruction = cache_out_data[offset+`INSTRUCTION_LENGTH-1:offset];
+   assign instruction = cache_out_data >> offset;
    
    assign pcJump = {pcIncr[31:28], instruction[25:0]<<2};
    assign pcIncr = pc.pc + 4;
@@ -47,7 +47,7 @@ module fetch(// Input for memory_arbiter and stall_control
 
    always@(*) begin
       if(offset+`INSTRUCTION_LENGTH > `LINE_WIDTH) begin
-	`CERR("[fetch] Unaligned is not supported yet ! : pc %x, offset %x, instruction_length %x !", pc.pc, offset, `INSTRUCTION_LENGTH);
+	 `CERR(("[fetch] Unaligned is not supported yet ! : pc %x, offset %x, instruction_length %x !", pc.pc, offset, `INSTRUCTION_LENGTH))
 	 $finish;
       end
    end
