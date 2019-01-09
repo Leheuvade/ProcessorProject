@@ -10,7 +10,8 @@ module cache(
 	     input wire 		  from_memory_write_enable,
 
 	     // Interface with pipeline stage
-	     input wire [LINE_WIDTH-1:0]  in_data,
+	     input wire [`WORD_SIZE-1:0]  in_data,
+	     input wire 		  size,
 	     input wire 		  enable,
 	     input wire 		  write_or_read,
 	     input wire [ADDR_SIZE-1:0]   address,
@@ -18,7 +19,7 @@ module cache(
 	     // Interface with main memory
 	     output wire 		  write_to_memory,
 	     output wire 		  cache_miss,
-	     output reg [ADDR_SIZE-1:0]  to_memory_address,
+	     output reg [ADDR_SIZE-1:0]   to_memory_address,
 	     output wire [LINE_WIDTH-1:0] to_memory_out_data,
 	     
 	     // Interface with pipeline stage
@@ -44,6 +45,8 @@ module cache(
    wire [TAG_SIZE-1:0] 			    tag = address[ADDR_SIZE-1:ADDR_SIZE-TAG_SIZE];
    wire 				    dirty_evict = valid[line_addr] && dirty[line_addr] && tags[line_addr]!=tag;
    wire 				    should_update_cache = (ready && enable && write_or_read==`WRITE);
+   wire [`LINE_ADDR_START_INDEX+2:0] 	    offset = address[`LINE_ADDR_START_INDEX-1:0] << 3;
+   wire [LINE_WIDTH-1:0] 		    in_data_line = {(out_data<<(LINE_WIDTH-offset-size)), in_data, ((out_data<<(LINE_WIDTH-offset))>>(LINE_WIDTH-offset))};// TODO : c'est dégueu et en plus je doute que ça marche
    
    assign write_to_memory = (enable && write_or_read==`WRITE && dirty_evict);
    assign cache_miss = (enable && !dirty_evict && (!valid[line_addr] || tags[line_addr]!=tag));
@@ -67,8 +70,8 @@ module cache(
 	 dirty[line_addr] <= 0;
 	 valid[line_addr] <= 1;
       end else if (should_update_cache) begin
-	 `COUT(("[%s cache] Wrote new value %x to address %x into cache, which is now dirty", CACHE_TYPE, in_data, address))
-	 cache[line_addr] <= in_data;
+	 `COUT(("[%s cache] Wrote new value %x (whole line %x) to address %x into cache, which is now dirty", CACHE_TYPE, in_data, in_data_line, address))
+	 cache[line_addr] <= in_data_line;
 	 tags[line_addr] <= tag;
 	 dirty[line_addr] <= 1;
 	 valid[line_addr] <= 1;

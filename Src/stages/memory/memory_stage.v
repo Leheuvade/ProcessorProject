@@ -27,12 +27,14 @@ module  memory_stage(
    wire 					  word = ex_mem.word;
 
    wire [`LINE_WIDTH-1:0] 			  cache_out_data;
-   wire 					  offset = address[`LINE_ADDR_START_INDEX-1:0] << 3;
+   wire [`LINE_ADDR_START_INDEX+2:0] 		  offset = address[`LINE_ADDR_START_INDEX-1:0] << 3;
    wire 					  enable = memRead || memWrite;
    wire 					  write_or_read = memWrite? `WRITE : `READ;
    wire 					  data_length = word? `WORD_SIZE : `BYTE_SIZE;
-   
-   assign readData = cache_out_data >> offset;
+
+   wire [31:0] cache_data_no_offset = cache_out_data >> offset;
+   assign readData = cache_data_no_offset << (32-write_data_size) >> (32-write_data_size);
+   wire        write_data_size = word? `WORD : `BYTE;
    
    cache d_cache(
 	     	 .clock(clock),
@@ -42,6 +44,7 @@ module  memory_stage(
 	     	 .from_memory_write_enable(enable_write_from_memory_to_cache),
 
 	     	 .in_data(write_data),
+		 .size(write_data_size),
 	     	 .enable(enable),
 	     	 .write_or_read(write_or_read),
 		 .address(address),

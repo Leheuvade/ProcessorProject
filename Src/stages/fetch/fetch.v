@@ -17,7 +17,7 @@ module fetch(// Input for memory_arbiter and stall_control
    wire [`LINE_WIDTH-1:0] 	cache_out_data;
 
    // TODO : input
-   wire 			offset = pc.pc[`LINE_ADDR_START_INDEX-1:0] << 3;
+   wire [`LINE_ADDR_START_INDEX+2:0] offset = pc.pc[`LINE_ADDR_START_INDEX-1:0] << 3;
    
    assign instruction = cache_out_data >> offset;
    
@@ -32,6 +32,7 @@ module fetch(// Input for memory_arbiter and stall_control
 	     	 .from_memory_write_enable(enable_write_from_memory_to_cache),
 
 	     	 .in_data(`NONE),
+		 .size(`NONE),
 	     	 .enable(`ALWAYS_TRUE),
 	     	 .write_or_read(`READ),
 		 .address(pc.pc),

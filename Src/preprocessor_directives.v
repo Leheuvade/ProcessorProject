@@ -9,6 +9,8 @@
 
 `define WORD_SIZE 32
 `define BYTE_SIZE 8
+`define BYTE 0
+`define WORD 1
 
 `define INSTRUCTION_LENGTH 32
 
