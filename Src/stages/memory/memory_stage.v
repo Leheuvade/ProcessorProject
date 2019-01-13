@@ -2,21 +2,28 @@
 `include "cache/cache.v"
 
 module  memory_stage(
-		     input wire 		  clock,
+		     input wire 		       clock,
    
-		     output wire [31:0] 	  readData,
-		     output wire 		  data_hot_and_ready,
+		     output wire [31:0] 	       readData,
+		     output wire 		       data_hot_and_ready,
 
 		     // Input for memory_arbiter and stall_control
-		     input wire [`LINE_WIDTH-1:0] from_memory_to_cache_data,
-		     input wire 		  completed_write_from_cache_to_memory,
-		     input wire 		  enable_write_from_memory_to_cache,
+		     input wire [`LINE_WIDTH-1:0]      from_memory_to_cache_data,
+		     input wire 		       completed_write_from_cache_to_memory,
+		     input wire 		       enable_write_from_memory_to_cache,
+		     // For dTLB
+		     input wire [31-`OFFSET:0] 	       dtlb_w_virtual_page_i,
+		     input wire [31-`OFFSET:0] 	       dtlb_w_phys_page_i,
+		     input wire 		       dtlb_write_enable_i,
+		     output wire 		       dtlb_miss,
+		     output wire 		       dtlb_ready,
+		     input wire 		       privilege,
 
 		     // Output for memory_arbiter and stall_control
-		     output wire 		  enable_write_from_cache_to_memory,
-		     output wire 		  cache_miss,
-		     output wire [`PHYS_ADDR_SIZE-1:0]  to_memory_address,
-		     output wire [`LINE_WIDTH-1:0] to_memory_out_data
+		     output wire 		       enable_write_from_cache_to_memory,
+		     output wire 		       cache_miss,
+		     output wire [`PHYS_ADDR_SIZE-1:0] to_memory_address,
+		     output wire [`LINE_WIDTH-1:0]     to_memory_out_data
 		     );
 
    // Input from previous stage 
@@ -35,6 +42,21 @@ module  memory_stage(
    wire [31:0] cache_data_no_offset = cache_out_data >> offset;
    assign readData = cache_data_no_offset << (32-write_data_size) >> (32-write_data_size);
    wire        write_data_size = word? `WORD : `BYTE;
+
+   wire [`PHYS_ADDR_SIZE-1:0] phys_address;
+   wire [31:0] virtual_address = enable ? address : 0;
+
+   tlb dtlb(  .virtual_address_i(virtual_address),
+	      .phys_address_o(phys_address),
+  	      .ready_o(dtlb_ready),
+  	      .tlb_miss_o(dtlb_miss),
+	      .privilege_i(privilege),
+      
+	      // For modifying the tlb
+	      .w_virtual_page_i(dtlb_w_virtual_page_i),
+	      .w_phys_page_i(dtlb_w_phys_page_i),
+ 	      .write_enable_i(dtlb_write_enable_i)
+	      );
    
    cache d_cache(
 	     	 .clock(clock),
@@ -45,9 +67,9 @@ module  memory_stage(
 
 	     	 .in_data(write_data),
 		 .size(write_data_size),
-	     	 .enable(enable),
+	     	 .enable(enable && dtlb_ready && !dtlb_miss),
 	     	 .write_or_read(write_or_read),
-		 .address(address),
+		 .address(phys_address),
 
 	     	 .write_to_memory(enable_write_from_cache_to_memory),
 	     	 .cache_miss(cache_miss), 

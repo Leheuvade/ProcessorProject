@@ -1,6 +1,11 @@
 `ifndef _preprocessor_directives
 `define _preprocessor_directives
 
+`define OFFSET 12 // Should change name : this is for the virtual to memory page translation
+
+`define BOOT_ADDR (32'h1000)
+`define EXCEPTIONS_ADDR (32'h2000)
+
 `define NONE 0
 `define ALWAYS_TRUE 1
 

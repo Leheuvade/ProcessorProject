@@ -4,11 +4,14 @@ module id_ex(
 
 input clock;
 
-reg [31:0]readData1, readData2, address, pc;
+reg [31:0]readData1, readData2, address;
 reg [4:0]rt, rs, rd;
 reg [1:0]aluCtrl;
 reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, word;
-
+   reg exception;
+   reg [31:0] faulty_address;
+   reg [31:0] pc;
+      
 always @ (posedge clock) begin
 	if (stall_control.bubble_at_exec) begin
 		regDst <= 0; 
@@ -29,6 +32,9 @@ always @ (posedge clock) begin
 	        pc <= 0;
 	        rs <= 0;
 	        rt <= 0;
+
+	   exception <= 0;
+	   faulty_address <= 0;
 	end else if (!stall_control.stall_at_exec) begin 
 		regDst <= decode.regDst; 
 		branch <= decode.branch;
@@ -46,6 +52,8 @@ always @ (posedge clock) begin
 	        pc <= if_id.pc;
 	        rs <= decode.rs;
 	        rt <= decode.rt;
+	   exception <= if_id.exception;
+	   faulty_address <= if_id.faulty_address;
 	end
 end
 

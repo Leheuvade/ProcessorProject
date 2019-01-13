@@ -7,7 +7,10 @@ input clock;
 reg memWrite, memRead, word, regWrite, memToReg, pcSrc;
 reg [31:0]result, readData2, pcBranch; 
 reg [4:0]rd;
-
+   reg 	 exception;
+   reg [31:0] faulty_address;   
+   reg [31:0] pc;
+   
 always @ (posedge clock) begin
 	if (stall_control.bubble_at_memory) begin 
 		memRead <= 0;
@@ -20,6 +23,9 @@ always @ (posedge clock) begin
 	        rd <= 0;
 	        pcBranch <= 0;
 	        pcSrc <= 0;
+	   exception <= 0;
+	   faulty_address <= 0;
+	   pc <= 0;
 	end else if (~stall_control.stall_at_memory) begin 
 		memRead <= id_ex.memRead;
 		memWrite <=  id_ex.memWrite;
@@ -31,6 +37,9 @@ always @ (posedge clock) begin
 	        rd <= id_ex.rd;
 	        pcBranch <= exec.resultBranch;
 	        pcSrc <= exec.pcSrc;
+	   exception <= id_ex.exception;
+	   faulty_address <= id_ex.faulty_address;
+	   pc <= id_ex.pc;
 	end
 end
 

@@ -26,10 +26,10 @@ module stall_control(
    assign 			 stall_at_decode = !branch_not_taken && (stall_at_exec || decode.detectHazard.flush_CtrlBits); // TODO : Should implement bypasses though
    assign 			 stall_at_fetch = !branch_not_taken && (stall_at_decode || instruction_not_ready); // Update : I think I solved the fllowing problem by adding a RHS delay (artificial) intead of LHS delay // TODO : what about a cache_miss that corresponded to a non-taken pc ? 
    
-   assign                        bubble_at_wb = stall_at_memory;
-   assign 			 bubble_at_memory = branch_not_taken || (stall_at_exec && !stall_at_memory);
-   assign 			 bubble_at_exec = branch_not_taken || (stall_at_decode && !stall_at_exec);
-   assign 			 bubble_at_decode = branch_not_taken || (stall_at_fetch && !stall_at_decode);
+   assign                        bubble_at_wb = mem_wb.exception || stall_at_memory;
+   assign 			 bubble_at_memory = mem_wb.exception || branch_not_taken || (stall_at_exec && !stall_at_memory);
+   assign 			 bubble_at_exec = mem_wb.exception || branch_not_taken || (stall_at_decode && !stall_at_exec);
+   assign 			 bubble_at_decode = mem_wb.exception || branch_not_taken || (stall_at_fetch && !stall_at_decode);
    assign 			 bubble_at_fetch = 0;
    
 endmodule

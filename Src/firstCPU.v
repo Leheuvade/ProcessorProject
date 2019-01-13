@@ -18,10 +18,11 @@
 
 module firstCPU;
 
-reg clock;
-reg rst_PC;
-reg rst_IFID;
-wire [31:0]newPc;
+   reg clock;
+   reg rst_PC;
+   reg rst_IFID;
+   reg privilege;
+   wire [31:0] newPc;
 
 initial begin
   $dumpfile("firstCPU.vcd");
@@ -30,6 +31,7 @@ initial begin
   clock = 0;
   rst_PC = 1;
   rst_IFID = 1;
+   privilege = 1;
   #4 rst_PC = 0;rst_IFID = 0;
   #36 $finish;
 end
@@ -39,6 +41,14 @@ always begin
   #2 clock = ~clock;
 end
 
+   always@(posedge clock) begin
+      if (mem_wb.exception) begin
+	 privilege <= 1;
+      end else if (mem_wb.iret) begin
+	 privilege <= 0;
+      end
+   end
+   
 mux32 mux32(.in1(fetch.pcIncr), .in2(ex_mem.pcBranch), .ctrl(ex_mem.pcSrc), .out(newPc));
 
 //Flip Flop PC 
@@ -71,7 +81,7 @@ pc pc(.rst(rst_PC), .clock(clock));
    wire d_cache_ready;
    memory_arbiter memory_arbiter(
 				 // i_cache interface
-				 .i_cache_address(pc.pc),
+				 .i_cache_address(pc_phys_address),
 				 .i_cache_enable(instruction_not_ready),
 				 .i_cache_out_data(from_memory_to_i_cache_data),
 				 .i_cache_ready(enable_write_from_memory_to_i_cache), 
@@ -92,10 +102,26 @@ pc pc(.rst(rst_PC), .clock(clock));
    wire [`LINE_WIDTH-1:0] from_memory_to_i_cache_data;
    wire enable_write_from_memory_to_i_cache;
    wire instruction_not_ready = ~instruction_hot_and_ready;
+
+   wire [31-`OFFSET:0] itlb_w_virtual_page_i;
+   wire [31-`OFFSET:0] itlb_w_phys_page_i;
+   wire 	       itlb_write_enable_i;
+   wire 	       itlb_miss;
+   wire 	       itlb_ready;
+   wire [`PHYS_ADDR_SIZE-1:0]   pc_phys_address;
    
    fetch fetch( // Input for memory_arbiter and stall_control
 		.from_memory_to_cache_data(from_memory_to_i_cache_data),
 		.enable_write_from_memory_to_cache(enable_write_from_memory_to_i_cache),
+
+		// iTLB
+		.itlb_w_virtual_page_i(itlb_w_virtual_page_i),
+		.itlb_w_phys_page_i(itlb_w_phys_page_i),
+		.itlb_write_enable_i(itlb_write_enable_i),
+ 		.itlb_miss(itlb_miss),
+ 		.itlb_ready(itlb_ready),
+		.privilege(privilege),
+		.phys_address(pc_phys_address),
 		
 		// TODO : faudra peut-être les set
 		.instruction(),
@@ -105,7 +131,7 @@ pc pc(.rst(rst_PC), .clock(clock));
 		);
 
 //Flip Flop IF_ID
-if_id if_id(.rst(rst_IFID), .clock(clock));
+if_id if_id(.rst(rst_IFID), .clock(clock), .itlb_miss(itlb_miss), .itlb_ready(itlb_ready));
 
 //Decode stage 
 decode decode();
@@ -128,6 +154,12 @@ ex_mem ex_mem(.clock(clock));
    wire d_cache_miss;
    wire [`PHYS_ADDR_SIZE-1:0] from_d_cache_to_memory_address;
    wire [`LINE_WIDTH-1:0] from_d_cache_to_memory_out_data;
+
+   wire [31-`OFFSET:0] 	  dtlb_w_virtual_page_i;
+   wire [31-`OFFSET:0] 	  dtlb_w_phys_page_i;
+   wire 		  dtlb_write_enable_i;
+   wire 		  dtlb_miss;
+   wire 		  dtlb_ready;
    
    memory_stage memory(
 		       .clock(clock),
@@ -140,6 +172,14 @@ ex_mem ex_mem(.clock(clock));
 		       .completed_write_from_cache_to_memory(completed_write_from_d_cache_to_memory),
 		       .enable_write_from_memory_to_cache(enable_write_from_memory_to_d_cache),
 
+		       // dTLB
+		       .dtlb_w_virtual_page_i(dtlb_w_virtual_page_i),
+		       .dtlb_w_phys_page_i(dtlb_w_phys_page_i),
+		       .dtlb_write_enable_i(dtlb_write_enable_i),
+ 		       .dtlb_miss(dtlb_miss),
+ 		       .dtlb_ready(dtlb_ready),
+		       .privilege(privilege),
+		       
 		       // Output for memory_arbiter and stall_control
 		       .enable_write_from_cache_to_memory(enable_write_from_d_cache_to_memory),
 		       .cache_miss(d_cache_miss),
@@ -148,7 +188,7 @@ ex_mem ex_mem(.clock(clock));
 		       );
 
 //Flip Flop MEM_WB
-mem_wb mem_wb(.clock(clock));
+mem_wb mem_wb(.clock(clock), .dtlb_miss(dtlb_miss), .dtlb_ready(dtlb_ready));
 
 //Write Back stage
 wb wb();
