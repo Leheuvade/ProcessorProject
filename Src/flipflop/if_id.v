@@ -3,12 +3,13 @@ module if_id(rst, clock);
 input clock, rst;
 
 reg we;
+reg clear;
 wire flush;
 reg [31:0]instruction, pc, pcJump;
 	
 assign flush = ex_mem.flushPrevInstr || decode.jump;
 always @ (posedge clock) begin
-	if (rst || flush) begin
+	if (rst || flush || clear) begin
 		instruction <= 32'bx00000000000000000000000000;
 	 	pc <= 0;
 	 	pcJump <= 0;

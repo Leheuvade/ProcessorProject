@@ -1,3 +1,5 @@
+`include "preprocessor_directives.v"
+
 //Include stages modules
 `include "stages/fetch/fetch.v"
 `include "stages/decode/decode.v"
@@ -12,6 +14,10 @@
 `include "flipflop/mem_wb.v"
 //Include genericComponents
 `include "genericComponents/mux32Bits.v"
+//Include memory
+`include "main_memory/main_memory.v"
+`include "main_memory/arb.v"
+
 
 module firstCPU;
 
@@ -28,7 +34,7 @@ initial begin
   rst_PC = 1;
   rst_IFID = 1;
   #4 rst_PC = 0;rst_IFID = 0;
-  #36 $finish;
+  #74 $finish;
 end
 
 // Clock generator
@@ -43,6 +49,10 @@ pc pc(.rst(rst_PC), .clock(clock));
 
 //Fetch stage 
 fetch fetch();
+
+main_memory main_memory();
+
+arb arb();
 
 //Flip Flop IF_ID
 if_id if_id(.rst(rst_IFID), .clock(clock));
