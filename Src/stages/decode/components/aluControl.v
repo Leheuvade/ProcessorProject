@@ -32,9 +32,6 @@ case(aluOp)
   6'b110000 : begin //BEQ -> SUB
         aluCtrl = 2'b10;
       end
-  default : begin
-              $display("@%0dns AluControl default case %b", $time, aluOp);
-            end
 endcase
 
 endmodule
