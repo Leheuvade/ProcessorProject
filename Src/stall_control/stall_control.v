@@ -28,8 +28,8 @@ module stall_control(
    
    assign                        bubble_at_wb = mem_wb.exception || stall_at_memory;
    assign 			 bubble_at_memory = mem_wb.exception || branch_not_taken || (stall_at_exec && !stall_at_memory);
-   assign 			 bubble_at_exec = mem_wb.exception || branch_not_taken || (stall_at_decode && !stall_at_exec);
-   assign 			 bubble_at_decode = mem_wb.exception || branch_not_taken || (stall_at_fetch && !stall_at_decode);
+   assign 			 bubble_at_exec = id_ex.iret || mem_wb.exception || branch_not_taken || (stall_at_decode && !stall_at_exec);
+   assign 			 bubble_at_decode = id_ex.iret || mem_wb.exception || branch_not_taken || (stall_at_fetch && !stall_at_decode);
    assign 			 bubble_at_fetch = 0;
    
 endmodule

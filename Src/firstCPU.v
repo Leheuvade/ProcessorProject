@@ -44,7 +44,7 @@ end
    always@(posedge clock) begin
       if (mem_wb.exception) begin
 	 privilege <= 1;
-      end else if (mem_wb.iret) begin
+      end else if (id_ex.iret) begin
 	 privilege <= 0;
       end
    end
@@ -137,10 +137,15 @@ if_id if_id(.rst(rst_IFID), .clock(clock), .itlb_miss(itlb_miss), .itlb_ready(it
 decode decode();
 
 //Flip Flop ID_EX
-id_ex id_ex(.clock(clock));
+id_ex id_ex(.clock(clock), .privilege(privilege));
 
-//Exec stage
-exec exec();
+//Exec stage and TLB_WRITE
+   assign dtlb_write_enable_i = itlb_write_enable_i;
+   assign dtlb_w_phys_page_i = itlb_w_phys_page_i;
+   assign dtlb_w_virtual_page_i = itlb_w_virtual_page_i;
+   exec exec(.enable_tlb_write_o(itlb_write_enable_i),
+	     .virtual_page_o(itlb_w_virtual_page_i),
+	     .phys_page_o(itlb_w_phys_page_i));
 
 //Flip Flop EX_MEM
 ex_mem ex_mem(.clock(clock));

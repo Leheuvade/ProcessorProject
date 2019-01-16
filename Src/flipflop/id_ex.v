@@ -1,8 +1,7 @@
 module id_ex(
-	clock
+	     input clock,
+	     input privilege
 );
-
-input clock;
 
 reg [31:0]readData1, readData2, address;
 reg [4:0]rt, rs, rd;
@@ -11,6 +10,7 @@ reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, word;
    reg exception;
    reg [31:0] faulty_address;
    reg [31:0] pc;
+   reg 	      ignore_op2, iret, tlb_write;
       
 always @ (posedge clock) begin
 	if (stall_control.bubble_at_exec) begin
@@ -32,6 +32,9 @@ always @ (posedge clock) begin
 	        pc <= 0;
 	        rs <= 0;
 	        rt <= 0;
+	        ignore_op2 <= 0;
+	        iret <= 0;
+	        tlb_write <= 0;
 
 	   exception <= 0;
 	   faulty_address <= 0;
@@ -52,8 +55,11 @@ always @ (posedge clock) begin
 	        pc <= if_id.pc;
 	        rs <= decode.rs;
 	        rt <= decode.rt;
-	   exception <= if_id.exception;
+	   exception <= if_id.exception || (!privilege && decode.control.tlb_write);
 	   faulty_address <= if_id.faulty_address;
+	   ignore_op2 <= decode.control.ignore_op2;
+	   iret <= decode.control.iret;
+	   tlb_write <= decode.control.tlb_write;
 	end
 end
 

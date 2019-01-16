@@ -35,7 +35,7 @@ module  memory_stage(
 
    wire [`LINE_WIDTH-1:0] 			  cache_out_data;
    wire [`LINE_ADDR_START_INDEX+2:0] 		  offset = address[`LINE_ADDR_START_INDEX-1:0] << 3;
-   wire 					  enable = memRead || memWrite;
+   wire 					  enable = (memRead || memWrite) && !ex_mem.exception;
    wire 					  write_or_read = memWrite? `WRITE : `READ;
    wire 					  data_length = word? `WORD_SIZE : `BYTE_SIZE;
 

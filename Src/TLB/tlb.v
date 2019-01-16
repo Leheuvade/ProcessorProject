@@ -30,7 +30,7 @@ module tlb(input wire [31:0] virtual_address_i,
    wire [INDEX_SIZE-1:0] 			    out_index_ored[0:TLB_SIZE-1];
    
    reg 						    TLB_write_index;
-   always@(*) TLB_write_index = out_index_ored[`TLB_SIZE-1];
+   //always@(*) TLB_write_index = out_index_ored[`TLB_SIZE-1];
    
    initial TLB_write_index = 0;
       

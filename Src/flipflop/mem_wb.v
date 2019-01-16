@@ -10,7 +10,6 @@ reg memToReg, regWrite;
    reg exception;
    reg [31:0] faulty_address;
    reg [31:0] pc;
-   reg 	      iret; // TODO : l'incorporer dans quelque contrôle central
          
 always @ (posedge clock)begin
    if (stall_control.bubble_at_wb) begin
