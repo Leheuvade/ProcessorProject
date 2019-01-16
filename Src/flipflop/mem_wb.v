@@ -18,7 +18,7 @@ always @ (posedge clock)begin
 		regWrite <= 1'bx;
 	end else begin
 		result <= ex_mem.result;
-		readData <= memory.readData;
+		readData <= cache.readData;
 		rd <= ex_mem.rd;
 		memToReg <= ex_mem.memToReg;
 		regWrite <= ex_mem.regWrite;

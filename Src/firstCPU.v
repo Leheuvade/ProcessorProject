@@ -4,7 +4,8 @@
 `include "stages/fetch/fetch.v"
 `include "stages/decode/decode.v"
 `include "stages/exec/exec.v"
-`include "stages/memory/memory.v"
+// `include "stages/cache/memory.v"
+`include "stages/cache/cache.v"
 `include "stages/wb/wb.v"
 //Include flip flop modules
 `include "flipflop/pc.v"
@@ -81,7 +82,7 @@ exec exec();
 ex_mem ex_mem(.clock(clock));
 
 //Memory stage 
-memory memory();
+cache cache();
 
 //Flip Flop MEM_WB
 mem_wb mem_wb(.clock(clock));

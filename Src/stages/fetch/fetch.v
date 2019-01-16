@@ -1,4 +1,4 @@
-`include "stages/fetch/components/cache.v"
+`include "stages/fetch/components/instCache.v"
 
 module fetch();
 
@@ -15,12 +15,12 @@ initial begin
 	waitInst = 0;
 end 
 
-cache cache(.address(pc.pc), .miss(miss));
+instCache instCache(.address(pc.pc), .miss(miss));
 
-always @(miss or cache.data) begin
+always @(miss or instCache.data) begin
 	if (waitInst == 0) begin
 		if (miss == 0) begin
-			instruction = cache.data;
+			instruction = instCache.data;
 		end else begin
 			arb.reqI = 1;
 			arb.reqAdrrI = pc.pc;
