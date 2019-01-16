@@ -2,6 +2,6 @@
 `define _tlb_preprocessor_directives
 `include "preprocessor_directives.v"
 
-`define TLB_SIZE 7
+`define TLB_SIZE 8
 
 `endif

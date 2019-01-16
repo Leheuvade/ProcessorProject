@@ -30,7 +30,8 @@ module fetch(// Input for memory_arbiter and stall_control
    assign pcJump = {pcIncr[31:28], instruction[25:0]<<2};
    assign pcIncr = pc.pc + 4;
 
-   tlb itlb(  .virtual_address_i(pc.pc),
+   tlb itlb(  .clock(clock),
+	      .virtual_address_i(pc.pc),
 	      .phys_address_o(phys_address),
   	      .ready_o(itlb_ready),
   	      .tlb_miss_o(itlb_miss),

@@ -46,7 +46,8 @@ module  memory_stage(
    wire [`PHYS_ADDR_SIZE-1:0] phys_address;
    wire [31:0] virtual_address = enable ? address : 0;
 
-   tlb dtlb(  .virtual_address_i(virtual_address),
+   tlb dtlb(  .clock(clock),
+	      .virtual_address_i(virtual_address),
 	      .phys_address_o(phys_address),
   	      .ready_o(dtlb_ready),
   	      .tlb_miss_o(dtlb_miss),
