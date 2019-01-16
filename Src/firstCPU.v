@@ -30,10 +30,21 @@ initial begin
   $dumpfile("firstCPU.vcd");
   $dumpvars(0, firstCPU);
   // $monitor ("%g\t clock=%b", $time, clock);
+  //Set clock
   clock = 0;
-  rst_PC = 1;
-  rst_IFID = 1;
-  #4 rst_PC = 0;rst_IFID = 0;
+
+  //Set rst
+  pc.rst = 1;
+  if_id.rst = 1;
+  mem_wb.clear = 0;
+
+  //Set we
+  pc.we = 1;
+  if_id.we = 1;
+  id_ex.we = 1;
+  ex_mem.we = 1;
+  
+  #4 pc.rst = 0;if_id.rst = 0;
   #74 $finish;
 end
 
@@ -45,7 +56,7 @@ end
 mux32 mux32(.in1(fetch.pcIncr), .in2(ex_mem.pcBranch), .ctrl(ex_mem.pcSrc), .out(newPc));
 
 //Flip Flop PC 
-pc pc(.rst(rst_PC), .clock(clock));
+pc pc(.clock(clock));
 
 //Fetch stage 
 fetch fetch();
@@ -55,7 +66,7 @@ main_memory main_memory();
 arb arb();
 
 //Flip Flop IF_ID
-if_id if_id(.rst(rst_IFID), .clock(clock));
+if_id if_id(.clock(clock));
 
 //Decode stage 
 decode decode();

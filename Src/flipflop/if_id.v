@@ -1,7 +1,8 @@
-module if_id(rst, clock);
+module if_id(clock);
 
-input clock, rst;
+input clock;
 
+reg rst;
 reg we;
 reg clear;
 wire flush;

@@ -1,7 +1,8 @@
-module pc(rst, clock);
+module pc(clock);
 
-input clock, rst;
+input clock;
 
+reg rst;
 reg we;
 reg [31:0]pc;
 wire [31:0]intermediatePc, finalPc;
