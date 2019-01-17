@@ -73,33 +73,66 @@ mux32 mux32(.in1(fetch.pcIncr), .in2(ex_mem.pcBranch), .ctrl(ex_mem.pcSrc), .out
 //Flip Flop PC 
 pc pc(.clock(clock));
 
-//Fetch stage 
-fetch fetch();
+//Fetch stage
+   
+   wire [31-`OFFSET:0] itlb_w_virtual_page_i;
+   wire [31-`OFFSET:0] itlb_w_phys_page_i;
+   wire 	       itlb_write_enable_i;
+   wire 	       itlb_miss;
+   wire 	       itlb_ready;
+   wire [`PHYS_ADDR_SIZE-1:0]   pc_phys_address;
+  
+fetch fetch(
+		.itlb_w_virtual_page_i(itlb_w_virtual_page_i),
+		.itlb_w_phys_page_i(itlb_w_phys_page_i),
+		.itlb_write_enable_i(itlb_write_enable_i),
+ 		.itlb_miss(itlb_miss),
+ 		.itlb_ready(itlb_ready),
+		.privilege(privilege),
+		.phys_address(pc_phys_address)
+);
 
 main_memory main_memory();
 
 arb arb();
 
 //Flip Flop IF_ID
-if_id if_id(.clock(clock));
+if_id if_id(.clock(clock), .itlb_miss(itlb_miss), .itlb_ready(itlb_ready));
 
 //Decode stage 
 decode decode();
 
 //Flip Flop ID_EX
-id_ex id_ex(.clock(clock));
+id_ex id_ex(.clock(clock), .privilege(privilege));
 
 //Exec stage
-exec exec();
+   assign dtlb_write_enable_i = itlb_write_enable_i;
+   assign dtlb_w_phys_page_i = itlb_w_phys_page_i;
+   assign dtlb_w_virtual_page_i = itlb_w_virtual_page_i;
+   exec exec(.enable_tlb_write_o(itlb_write_enable_i),
+	     .virtual_page_o(itlb_w_virtual_page_i),
+	     .phys_page_o(itlb_w_phys_page_i));
 
 //Flip Flop EX_MEM
 ex_mem ex_mem(.clock(clock));
 
 //Memory stage 
-cache cache();
+   wire [31-`OFFSET:0] 	  dtlb_w_virtual_page_i;
+   wire [31-`OFFSET:0] 	  dtlb_w_phys_page_i;
+   wire 		  dtlb_write_enable_i;
+   wire 		  dtlb_miss;
+   wire 		  dtlb_ready;
+cache cache(
+		       .dtlb_w_virtual_page_i(dtlb_w_virtual_page_i),
+		       .dtlb_w_phys_page_i(dtlb_w_phys_page_i),
+		       .dtlb_write_enable_i(dtlb_write_enable_i),
+ 		       .dtlb_miss(dtlb_miss),
+ 		       .dtlb_ready(dtlb_ready),
+		       .privilege(privilege)
+);
 
 //Flip Flop MEM_WB
-mem_wb mem_wb(.clock(clock));
+mem_wb mem_wb(.clock(clock), .dtlb_miss(dtlb_miss), .dtlb_ready(dtlb_ready));
 
 //Write Back stage
 wb wb();

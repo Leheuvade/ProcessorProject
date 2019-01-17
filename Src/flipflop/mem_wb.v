@@ -11,6 +11,12 @@ reg clear;
 reg exception;
    reg [31:0] faulty_address;
    reg [31:0] pc;
+
+   always @ exception begin
+      if (exception) begin
+	 fetch.waitInst = 1;
+      end
+   end
    
 always @ (posedge clock)begin 
 	if (clear) begin 
@@ -29,9 +35,9 @@ always @ (posedge clock)begin
 		memToReg <= ex_mem.memToReg;
 		regWrite <= ex_mem.regWrite;
 	   pc <= ex_mem.pc;
-	   exception <= ex_mem.exception || (dtlb_miss && dtlb_ready && memory.enable);
+	   exception <= ex_mem.exception || (dtlb_miss && dtlb_ready && cache.enable);
 	   if (ex_mem.exception) faulty_address <= ex_mem.faulty_address;
-	   else if (dtlb_miss && dtlb_ready && memory.enable) faulty_address <= memory.address;
+	   else if (dtlb_miss && dtlb_ready && cache.enable) faulty_address <= cache.address;
 	end
  end
 

@@ -12,6 +12,12 @@ reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, word;
    reg [31:0] faulty_address;
    reg 	      ignore_op2, iret, tlb_write;
 
+always@(iret) begin
+   if(iret) begin
+      fetch.waitInst = 1;
+   end
+end
+   
 always @ (posedge clock) begin
 	if (we) begin
 		if (ex_mem.flushPrevInstr) begin

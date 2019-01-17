@@ -1,6 +1,14 @@
 `include "stages/cache/components/dataCache.v"
 
-module cache;
+module cache(
+	     		     input wire [31-`OFFSET:0] 	       dtlb_w_virtual_page_i,
+		     input wire [31-`OFFSET:0] 	       dtlb_w_phys_page_i,
+		     input wire 		       dtlb_write_enable_i,
+		     output wire 		       dtlb_miss,
+		     output wire 		       dtlb_ready,
+		     input wire 		       privilege
+	     );
+   
 
 reg [31:0]readData;
 reg waitData, writeData;
@@ -14,8 +22,25 @@ initial begin
 	waitData = 0;
 	writeData = 0;
 end 
+   wire 					  enable = (memRead || memWrite) && !ex_mem.exception;
+   wire [`PHYS_ADDR_SIZE-1:0] phys_address;
+   wire [31:0] virtual_address = enable ? address : 0;
 
-dataCache dataCache(.address(address), .miss(miss));
+   tlb dtlb(  .clock(clock),
+	      .virtual_address_i(virtual_address),
+	      .phys_address_o(phys_address),
+  	      .ready_o(dtlb_ready),
+  	      .tlb_miss_o(dtlb_miss),
+	      .privilege_i(privilege),
+      
+	      // For modifying the tlb
+	      .w_virtual_page_i(dtlb_w_virtual_page_i),
+	      .w_phys_page_i(dtlb_w_phys_page_i),
+ 	      .write_enable_i(dtlb_write_enable_i)
+	      );
+
+   
+dataCache dataCache(.address(phys_address), .miss(miss));
 
 always @(miss or dataCache.data or memRead or memWrite or write_data or dataCache.dirtyEvict) begin 
 	if(memRead || memWrite) begin

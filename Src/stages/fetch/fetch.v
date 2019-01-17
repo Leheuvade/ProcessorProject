@@ -1,6 +1,15 @@
+`include "preprocessor_directives.v"
 `include "stages/fetch/components/instCache.v"
-
-module fetch();
+`include "TLB/tlb.v"
+module fetch(
+	     input wire [31-`OFFSET:0] 	       itlb_w_virtual_page_i,
+	     input wire [31-`OFFSET:0] 	       itlb_w_phys_page_i,
+	     input wire 		       itlb_write_enable_i,
+	     output wire 		       itlb_miss,
+	     output wire 		       itlb_ready,
+	     input wire 		       privilege,
+	     output wire [`PHYS_ADDR_SIZE-1:0] phys_address
+);
 
 reg [31:0]instruction;
 wire [31:0]pcIncr;
@@ -15,7 +24,20 @@ initial begin
 	waitInst = 0;
 end 
 
-instCache instCache(.address(pc.pc), .miss(miss));
+   tlb itlb(  .clock(clock),
+	      .virtual_address_i(pc.pc),
+	      .phys_address_o(phys_address),
+  	      .ready_o(itlb_ready),
+  	      .tlb_miss_o(itlb_miss),
+	      .privilege_i(privilege),
+      
+	      // For modifying the tlb
+	      .w_virtual_page_i(itlb_w_virtual_page_i),
+	      .w_phys_page_i(itlb_w_phys_page_i),
+ 	      .write_enable_i(itlb_write_enable_i)
+	      );
+
+instCache instCache(.address(phys_address), .miss(miss));
 
 always @(miss or instCache.data) begin
 	if (waitInst == 0) begin
@@ -23,7 +45,7 @@ always @(miss or instCache.data) begin
 			instruction = instCache.data;
 		end else begin
 			arb.reqI = 1;
-			arb.reqAddrI = pc.pc;
+			arb.reqAddrI = phys_address;
 			pc.we = 0;
 			if_id.clear = 1;
 			waitInst = 1;
