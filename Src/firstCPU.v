@@ -26,6 +26,7 @@ reg clock;
 reg rst_PC;
 reg rst_IFID;
 wire [31:0]newPc;
+   reg 	   privilege;
 
 initial begin
   $dumpfile("firstCPU.vcd");
@@ -44,11 +45,24 @@ initial begin
   if_id.we = 1;
   id_ex.we = 1;
   ex_mem.we = 1;
-  
+
+   //Set privilege
+   privilege = 1;
+   
   #4 pc.rst = 0;if_id.rst = 0;
   #74 $finish;
 end
 
+// Privilege reg update
+   always@(posedge clock) begin
+      if (mem_wb.exception) begin
+	 privilege <= 1;
+      end else if (id_ex.iret) begin
+	 privilege <= 0;
+      end
+   end
+
+   
 // Clock generator
 always begin
   #2 clock = ~clock;

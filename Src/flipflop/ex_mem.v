@@ -8,7 +8,10 @@ reg memWrite, memRead, word, regWrite, memToReg, pcSrc, flushPrevInstr;
 reg [31:0]result, readData2, pcBranch; 
 reg [4:0]rd;
 reg we;
-
+   reg 	 exception;
+   reg [31:0] faulty_address;   
+   reg [31:0] pc;
+   
 always @ (posedge clock) begin
 	if (we) begin
 		if (flushPrevInstr) begin 
@@ -17,6 +20,9 @@ always @ (posedge clock) begin
 			word <= 0;
 			memToReg <= 0;
 			regWrite <= 0;
+		   exception <= 0;
+	   faulty_address <= 0;
+	   pc <= 0;
 		end else begin 
 			memRead <= id_ex.memRead;
 			memWrite <=  id_ex.memWrite;
@@ -30,6 +36,9 @@ always @ (posedge clock) begin
 		pcBranch <= exec.resultBranch;
 		pcSrc <= exec.pcSrc;
 		flushPrevInstr <= exec.flushPrevInstr;
+	   exception <= id_ex.exception;
+	   faulty_address <= id_ex.faulty_address;
+	   pc <= id_ex.pc;
 	end
 end
 

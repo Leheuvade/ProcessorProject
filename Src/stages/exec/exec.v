@@ -2,15 +2,23 @@
 `include "stages/exec/components/forwardUnit.v"
 `include "stages/exec/components/adderBranch.v"
 `include "genericComponents/mux32Bits3To1.v"
+`include "TLB/preprocessor_directives.v"
 
-module exec;
+module exec(output wire enable_tlb_write_o,
+	    output wire [31-`OFFSET:0] virtual_page_o,
+	    output wire [31-`OFFSET:0] phys_page_o);
 
 wire zero, pcSrc, flushPrevInstr;
 wire [31:0]aluSrc, op1, op2, result, resultBranch;
 wire [1:0]forwardA, forwardB;
-
+   wire      ignore_op2;
+   
 assign pcSrc = zero && id_ex.branch;
 assign flushPrevInstr = zero && id_ex.branch;
+   assign ignore_op2 = id_ex.ignore_op2;
+   assign enable_tlb_write_o = id_ex.tlb_write;
+   assign virtual_page_o = id_ex.readData1[31:`OFFSET];
+   assign phys_page_o = id_ex.readData2[31:`OFFSET];
 
 mux32 getAluSrc(.in1(id_ex.readData2), 
 	.in2(id_ex.address), 
@@ -31,7 +39,8 @@ mux32Bits3To1 getOp2(.in1(aluSrc),
 	.out(op2)
 );
 alu alu(.op1(op1), 
-	.op2(op2), 
+	.op2(op2),
+	.ignore_op2(ignore_op2),
 	.aluCtrl(id_ex.aluCtrl), 
 	.zero(zero), 
 	.result(result)

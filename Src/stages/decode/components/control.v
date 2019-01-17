@@ -1,9 +1,15 @@
+`include "instruction_encoding.v"
 module control;
 
 reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word;
+   reg tlb_write, iret;
+   reg ignore_op2;
 wire [5:0]opcode = if_id.instruction[31:26];
 
 always @ (opcode) begin
+   tlb_write = 0;
+   iret = 0;
+   ignore_op2 = 0;
 if (decode.flush_CtrlBits) begin
       regDst = 1'b0; 
       branch = 1'b0;
@@ -93,6 +99,42 @@ case(opcode)
       jump = 1'b0;
       word = 1'b1;
     end
+  `MOVRM1 : begin
+     regDst = 1;
+     branch = 0;
+     memRead = 0;
+     memToReg = 0;
+     memWrite = 0;
+     aluSrc = 0;
+     regWrite = 1;
+     jump = 0;
+     word = 0;
+     ignore_op2 = 1;
+  end
+  `TLBWRITE : begin
+     regDst = 0;
+     branch = 0;
+     memRead = 0;
+     memToReg = 0;
+     memWrite = 0;
+     aluSrc = 0;
+     regWrite = 0;
+     jump = 0;
+     word = 0;
+     tlb_write = 1;
+  end
+  `IRET : begin
+     regDst = 0;
+     branch = 0;
+     memRead = 0;
+     memToReg = 0;
+     memWrite = 0;
+     aluSrc = 0;
+     regWrite = 0;
+     jump = 0;
+     word = 0;
+     iret = 1;
+  end
 //PC 
   6'b110000 : begin // Opcode 0x30 - BEQ
       regDst = 1'b0; 

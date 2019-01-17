@@ -21,7 +21,8 @@ assign aluSrc = control.aluSrc;
 assign regWrite = control.regWrite;
 assign jump = control.jump;
 assign word = control.word;
-
+assign file_register.move_rm1 = control.ignore_op2;
+   
 control control();
 mux5 mux(.in1(if_id.instruction[20:16]), .in2(if_id.instruction[15:11]), .ctrl(control.regDst), .out(rd));
 hazardDetectionUnit detectHazard(

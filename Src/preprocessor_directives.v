@@ -13,6 +13,11 @@
 `define LINE_NB_BYTES 16
 `define CACHE_LINES 4
 
+`define OFFSET 12 // Should change name : this is for the virtual to memory page translation
+
+`define BOOT_ADDR (32'h1000)
+`define EXCEPTIONS_ADDR (32'h2000)
+
 `define INSTRUCTION_LENGTH 32
 `define OFFSET_ADDR_SIZE $clog2(`LINE_NB_BYTES)
 `define INDEX_ADDR_SIZE $clog2(`CACHE_LINES)
