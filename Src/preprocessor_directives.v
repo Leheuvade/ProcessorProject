@@ -1,6 +1,11 @@
 `ifndef _preprocessor_directives
 `define _preprocessor_directives
 
+//MEMORY MISSION
+`define READDATA 0
+`define READINST 1
+`define WRITEDATA 2
+
 `define LATENCY 5
 `define MEM_SIZE (`MEM_LINES * `LINE_WIDTH)
 `define MEM_LINES 100
