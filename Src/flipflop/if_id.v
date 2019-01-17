@@ -22,7 +22,7 @@ always @ (posedge clock) begin
 	   faulty_address <= 0;
 	end else if (we && weFromHazard) begin
 	  instruction <= fetch.instruction;
-	  pc <= fetch.pcIncr;
+	  pc <= pc.pc;
 	  pcJump <= fetch.pcJump;
 	   exception <= itlb_miss && itlb_ready;
 	   faulty_address <= (itlb_miss && itlb_ready)? pc.pc : 0;

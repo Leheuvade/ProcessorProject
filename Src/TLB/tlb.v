@@ -70,17 +70,22 @@ module tlb(input wire clock,
       phys_page_o = 0;
       tlb_miss_o = 1;
       if (privilege_i) begin
+	 $display("Privilege so not changing address");
 	 phys_page_o = virtual_page_i;
 	 tlb_miss_o = 0;
       end else if (found!=0) begin
-	    phys_page_o = phys_page[TLB_index];
-	    tlb_miss_o = 0;
-      end 
+	 $display("Found TLB translation %x for phys %x", phys_address_o, virtual_address_i);
+	 phys_page_o = phys_page[TLB_index];
+	 tlb_miss_o = 0;
+      end else begin
+	 $display("TLB miss for %x", virtual_address_i);
+      end
       ready_o = 1;
    end 
 
    always@(posedge clock) begin
       if (write_enable_i) begin
+	 $display("Writing %x into TLB for phys %x", w_virtual_page_i, w_phys_page_i);
 	 virtual_page[TLB_write_index] <= w_virtual_page_i;
 	 phys_page[TLB_write_index] <= w_phys_page_i;
 	 valid[TLB_write_index] <= 1;

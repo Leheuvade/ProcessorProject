@@ -47,7 +47,7 @@ initial begin
   ex_mem.we = 1;
 
    //Set privilege
-   privilege = 1;
+   privilege = 0;
    
   #4 pc.rst = 0;if_id.rst = 0;
   #74 $finish;
@@ -56,8 +56,11 @@ end
 // Privilege reg update
    always@(posedge clock) begin
       if (mem_wb.exception) begin
+	 $display("Got an exception propagated through the pipeline");
+	 $display("Faulty_address %x, pc to return to %x", mem_wb.faulty_address, mem_wb.pc);
 	 privilege <= 1;
       end else if (id_ex.iret) begin
+	 $display("Got an iret");
 	 privilege <= 0;
       end
    end
@@ -66,6 +69,7 @@ end
 // Clock generator
 always begin
   #2 clock = ~clock;
+   $display("------------------------------");
 end
 
 mux32 mux32(.in1(fetch.pcIncr), .in2(ex_mem.pcBranch), .ctrl(ex_mem.pcSrc), .out(newPc));

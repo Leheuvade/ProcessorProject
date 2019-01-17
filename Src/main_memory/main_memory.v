@@ -18,7 +18,8 @@ end
 
 always @(indexLine or writeData) begin
 	$readmemb("../Resources/memory.list", memoryFile);
-	case(mission)
+        $readmemb("../Resources/exception.mem", memoryFile, `EXCEPTIONS_ADDR);
+   	case(mission)
   	0 : begin // READDATA
   	  		$display("tata");
         #`LATENCY line = memoryFile[indexLine];

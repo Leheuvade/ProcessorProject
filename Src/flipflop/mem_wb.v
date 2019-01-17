@@ -17,6 +17,8 @@ reg exception;
 	 fetch.waitInst = 1;
       end
    end
+
+wire should_raise_exception = (ex_mem.exception || (dtlb_miss && dtlb_ready && cache.enable));
    
 always @ (posedge clock)begin 
 	if (clear) begin 
@@ -35,9 +37,15 @@ always @ (posedge clock)begin
 		memToReg <= ex_mem.memToReg;
 		regWrite <= ex_mem.regWrite;
 	   pc <= ex_mem.pc;
-	   exception <= ex_mem.exception || (dtlb_miss && dtlb_ready && cache.enable);
+	   exception <= should_raise_exception;
 	   if (ex_mem.exception) faulty_address <= ex_mem.faulty_address;
 	   else if (dtlb_miss && dtlb_ready && cache.enable) faulty_address <= cache.address;
+	   if (should_raise_exception) begin
+	      ex_mem.we = 0;
+	      if_id.we = 0;
+	      id_ex.we = 0;
+	      clear = 1;
+	   end
 	end
  end
 

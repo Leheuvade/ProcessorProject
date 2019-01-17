@@ -15,7 +15,7 @@
 // Should change name : this is for the virtual to memory page translation
 `define OFFSET 12 
 `define PHYS_ADDR_SIZE 20
-`define BOOT_ADDR (32'h1000)
+`define BOOT_ADDR (32'h0000)
 `define EXCEPTIONS_ADDR (32'h2000)
 
 `define INSTRUCTION_LENGTH 20

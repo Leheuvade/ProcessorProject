@@ -134,6 +134,7 @@ case(opcode)
      jump = 0;
      word = 0;
      iret = 1;
+     $display("Decoded iret");
   end
 //PC 
   6'b110000 : begin // Opcode 0x30 - BEQ

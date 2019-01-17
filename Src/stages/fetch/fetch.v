@@ -42,15 +42,19 @@ instCache instCache(.address(phys_address), .miss(miss));
 always @(miss or instCache.data) begin
 	if (waitInst == 0) begin
 		if (miss == 0) begin
-			instruction = instCache.data;
+		   instruction = instCache.data;
 		end else begin
-			arb.reqI = 1;
-			arb.reqAddrI = phys_address;
-			pc.we = 0;
-			if_id.clear = 1;
-			waitInst = 1;
+		   if (!itlb_miss) begin
+		      $display("Cache miss for pc %x and phys %x", pc.pc, phys_address);
+		      arb.reqI = 1;
+		      arb.reqAddrI = phys_address;
+		      pc.we = 0;
+		      if_id.clear = 1;
+		      waitInst = 1;
+		   end
 		end
-	end else begin
+	end else begin // if (waitInst == 0)
+	   $display("Wait Inst");
 		pc.we = 0;
 		if_id.clear = 1;
 	end

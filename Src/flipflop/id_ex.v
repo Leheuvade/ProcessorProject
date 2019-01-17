@@ -17,6 +17,17 @@ always@(iret) begin
       fetch.waitInst = 1;
    end
 end
+
+   initial begin
+      readData1 = 0;
+      readData2 = 0;
+      address = 0;
+      aluCtrl = 0;
+      rd = 0;
+      pc = 0;
+      rs = 0;
+      rt = 0;
+   end
    
 always @ (posedge clock) begin
 	if (we) begin
