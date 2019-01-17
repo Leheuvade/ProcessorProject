@@ -5,6 +5,7 @@ input clock;
 reg rst;
 reg we;
 reg clear;
+reg weFromHazard;
 wire flush;
 reg [31:0]instruction, pc, pcJump;
 	
@@ -14,7 +15,7 @@ always @ (posedge clock) begin
 		instruction <= 32'bx00000000000000000000000000;
 	 	pc <= 0;
 	 	pcJump <= 0;
-	end else if (we) begin
+	end else if (we && weFromHazard) begin
 	  instruction <= fetch.instruction;
 	  pc <= fetch.pcIncr;
 	  pcJump <= fetch.pcJump;
