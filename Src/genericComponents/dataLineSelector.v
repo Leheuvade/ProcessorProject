@@ -22,24 +22,24 @@ output [`INSTRUCTION_LENGTH - 1:0]data;
 reg data;
 
 always @ (offset or line) begin
-data = line[31:0];
-// case(offset)
-//   0 : begin // Opcode 0x0 - ADD
-//         data = line[0 * `INSTRUCTION_LENGTH + `INSTRUCTION_LENGTH - 1:0 * `INSTRUCTION_LENGTH];
-//             end
-//   4 : begin // Opcode 0x1 - SUB
-//         data = line[1 * `INSTRUCTION_LENGTH + `INSTRUCTION_LENGTH - 1:1 * `INSTRUCTION_LENGTH];
-//             end
-//   8 : begin // Opcode 0x1 - MUL
-//         data = line[2 * `INSTRUCTION_LENGTH + `INSTRUCTION_LENGTH - 1:2 * `INSTRUCTION_LENGTH];
-//             end
-//   12 : begin // LDB -> ADD
-//         data = line[3 * `INSTRUCTION_LENGTH + `INSTRUCTION_LENGTH - 1:3 * `INSTRUCTION_LENGTH];
-//         end
-//   default : begin
-//       $display("offset doesn't match any case", offset);
-//   end
-// endcase	
+// data = line[31:0];
+case(offset)
+  0 : begin // Opcode 0x0 - ADD
+        data = line[0 * `INSTRUCTION_LENGTH + `INSTRUCTION_LENGTH - 1:0 * `INSTRUCTION_LENGTH];
+            end
+  4 : begin // Opcode 0x1 - SUB
+        data = line[1 * `INSTRUCTION_LENGTH + `INSTRUCTION_LENGTH - 1:1 * `INSTRUCTION_LENGTH];
+            end
+  8 : begin // Opcode 0x1 - MUL
+        data = line[2 * `INSTRUCTION_LENGTH + `INSTRUCTION_LENGTH - 1:2 * `INSTRUCTION_LENGTH];
+            end
+  12 : begin // LDB -> ADD
+        data = line[3 * `INSTRUCTION_LENGTH + `INSTRUCTION_LENGTH - 1:3 * `INSTRUCTION_LENGTH];
+        end
+  default : begin
+      $display("offset doesn't match any case", offset);
+  end
+endcase	
 end
 
 

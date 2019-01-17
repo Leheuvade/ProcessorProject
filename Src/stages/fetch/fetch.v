@@ -23,7 +23,7 @@ always @(miss or instCache.data) begin
 			instruction = instCache.data;
 		end else begin
 			arb.reqI = 1;
-			arb.reqAdrrI = pc.pc;
+			arb.reqAddrI = pc.pc;
 			pc.we = 0;
 			if_id.clear = 1;
 			waitInst = 1;

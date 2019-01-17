@@ -29,7 +29,6 @@ always @ (address or main_memory.line) begin
   offset = address[`OFFSET_ADDR_SIZE - 1:0];
   
   if(main_memory.fillICache == 1) begin
-    $display("ICACHEFILL");
     caches[index] = main_memory.line;
     tags[index] = tag;
     validTable[index] = 1;

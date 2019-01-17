@@ -117,7 +117,6 @@ case(opcode)
       word = 1'b0;
     end
   default : begin
-              $display("@%0dns default is selected, opcode %b",$time,opcode);
       regDst = 1'b0; 
       branch = 1'b0;
       memRead = 1'b0;
