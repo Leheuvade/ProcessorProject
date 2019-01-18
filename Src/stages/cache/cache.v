@@ -6,7 +6,9 @@ module cache(
 		     input wire 		       dtlb_write_enable_i,
 		     output wire 		       dtlb_miss,
 		     output wire 		       dtlb_ready,
-		     input wire 		       privilege
+		     input wire 		       privilege,
+	     output d_cache_miss,
+	     output enable_write_from_d_cache_to_memory
 	     );
    
 
@@ -17,6 +19,9 @@ wire [31:0]write_data = ex_mem.readData2;
 wire memRead = ex_mem.memRead;
 wire memWrite = ex_mem.memWrite;
 wire word = ex_mem.word;
+
+   assign enable_write_from_d_cache_to_memory = dataCache.dirtyEvict;
+   assign d_cache_miss = miss && (memRead || memWrite);
 
 initial begin
 	waitData = 0;
@@ -49,19 +54,9 @@ always @(miss or dataCache.data or memRead or memWrite or write_data or dataCach
 				arb.reqW = 1;
 				arb.writeAddr = address;
 				arb.writeData = dataCache.lineToSaveToMem;
-				pc.we = 0;
-				if_id.we = 0;
-				id_ex.we = 0;
-				ex_mem.we = 0;
-				mem_wb.clear = 1;
 				writeData = 1;
 			end
 		end else begin
-			pc.we = 0;
-			if_id.we = 0;
-			id_ex.we = 0;
-			ex_mem.we = 0;
-			mem_wb.clear = 1;
 		end
 
 		if (waitData == 0) begin
@@ -70,19 +65,9 @@ always @(miss or dataCache.data or memRead or memWrite or write_data or dataCach
 			end else begin
 				arb.reqD = 1;
 				arb.reqAddrD = address;
-				pc.we = 0;
-				if_id.we = 0;
-				id_ex.we = 0;
-				ex_mem.we = 0;
-				mem_wb.clear = 1;
 				waitData = 1;
 			end
 		end else begin
-			pc.we = 0;
-			if_id.we = 0;
-			id_ex.we = 0;
-			ex_mem.we = 0;
-			mem_wb.clear = 1;
 		end
 	end
 end

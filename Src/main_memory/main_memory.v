@@ -26,18 +26,12 @@ always @(indexLine or writeData) begin
 		cache.waitData = 0;
 		fillDCache = 1;
 		arb.reqD = 0;
-		if_id.we = 1;
-		id_ex.we = 1;
-		ex_mem.we = 1;
-		mem_wb.clear = 0;
             end
  	1 : begin // READINST
  		 $display("titi");
         #`LATENCY line = memoryFile[indexLine];
-		fetch.waitInst = 0;
 		fillICache = 1;
 		arb.reqI = 0;
-		if_id.clear = 0;
             end
   	2 : begin // WRITEDATA
   		$display("toto");
@@ -46,16 +40,10 @@ always @(indexLine or writeData) begin
 		cache.writeData = 0;
 		writeDataFinished = 1;
 		arb.reqW= 0;
-		if_id.we = 1;
-		id_ex.we = 1;
-		ex_mem.we = 1;
-		mem_wb.clear = 0;
             end
 	endcase	
 	if (arb.reqI == 0 && arb.reqD == 0 && arb.reqW == 0) begin
-		pc.we = 1;
 	end else begin
-		pc.we = 0;
 	end
 end
 

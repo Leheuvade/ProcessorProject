@@ -6,12 +6,14 @@
 
 module exec(output wire enable_tlb_write_o,
 	    output wire [31-`OFFSET:0] virtual_page_o,
-	    output wire [31-`OFFSET:0] phys_page_o);
+	    output wire [31-`OFFSET:0] phys_page_o,
+	    output 		       exec_flushPrevInstr);
 
 wire zero, pcSrc, flushPrevInstr;
 wire [31:0]aluSrc, op1, op2, result, resultBranch;
 wire [1:0]forwardA, forwardB;
    wire      ignore_op2;
+   assign exec_flushPrevInstr = flushPrevInstr;
    
 assign pcSrc = zero && id_ex.branch;
 assign flushPrevInstr = zero && id_ex.branch;

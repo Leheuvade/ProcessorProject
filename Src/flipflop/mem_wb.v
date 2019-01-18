@@ -7,21 +7,18 @@ module mem_wb(
 reg [31:0]result, readData;
 reg [4:0]rd;
 reg memToReg, regWrite;
-reg clear;
+wire clear = stall_control.bubble_at_wb;
+   wire we = ~ stall_control.stall_at_wb;
 reg exception;
    reg [31:0] faulty_address;
    reg [31:0] pc;
 
-   always @ exception begin
-      if (exception) begin
-	 fetch.waitInst = 1;
-      end
-   end
-
 wire should_raise_exception = (ex_mem.exception || (dtlb_miss && dtlb_ready && cache.enable));
    
 always @ (posedge clock)begin 
-	if (clear) begin 
+   if (!we) begin
+      $display("Stall at wb");
+   end else if (clear) begin 
 		result <= 32'bx;
 		readData <= 32'bx;
 		rd <= 5'bx;
@@ -30,7 +27,7 @@ always @ (posedge clock)begin
 	   exception <= 0;
 	   faulty_address <= 0;
 	   pc <= 0;
-	end else begin
+   end else begin
 		result <= ex_mem.result;
 		readData <= cache.readData;
 		rd <= ex_mem.rd;
@@ -40,13 +37,7 @@ always @ (posedge clock)begin
 	   exception <= should_raise_exception;
 	   if (ex_mem.exception) faulty_address <= ex_mem.faulty_address;
 	   else if (dtlb_miss && dtlb_ready && cache.enable) faulty_address <= cache.address;
-	   if (should_raise_exception) begin
-	      ex_mem.we = 0;
-	      if_id.we = 0;
-	      id_ex.we = 0;
-	      clear = 1;
-	   end
-	end
+   end
  end
 
 endmodule

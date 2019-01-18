@@ -6,17 +6,14 @@ module id_ex(
 reg [31:0]readData1, readData2, address, pc;
 reg [4:0]rt, rs, rd;
 reg [1:0]aluCtrl;
-reg we;
+   wire  we = ~ stall_control.stall_at_exec;
+   wire  rst = stall_control.bubble_at_exec;
+   
 reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, word;
    reg exception;
    reg [31:0] faulty_address;
    reg 	      ignore_op2, iret, tlb_write;
 
-always@(iret) begin
-   if(iret) begin
-      fetch.waitInst = 1;
-   end
-end
 
    initial begin
       readData1 = 0;
@@ -30,9 +27,11 @@ end
    end
    
 always @ (posedge clock) begin
-	if (we) begin
-		if (ex_mem.flushPrevInstr) begin
-			regDst <= 0; 
+   if(!we) begin
+      $display("Stall at ex");
+   end else if (rst) begin
+      $display("Bubble at ex");
+      			regDst <= 0; 
 			branch <= 0;
 			memRead <= 0;
 			memToReg <= 0;
@@ -46,7 +45,7 @@ always @ (posedge clock) begin
 
 	   exception <= 0;
 	   faulty_address <= 0;
-		end else begin 
+   end else begin 
 			regDst <= decode.regDst; 
 			branch <= decode.branch;
 			memRead <= decode.memRead;
@@ -60,7 +59,7 @@ always @ (posedge clock) begin
 	   ignore_op2 <= decode.control.ignore_op2;
 	   iret <= decode.control.iret;
 	   tlb_write <= decode.control.tlb_write;
-		end
+   end
 		readData1 <= decode.file_register.readData1;
 		readData2 <= decode.file_register.readData2;
 		address <= decode.address;
@@ -69,7 +68,6 @@ always @ (posedge clock) begin
 		pc <= if_id.pc;
 		rs <= decode.rs;
 		rt <= decode.rt;
-	end
 end
 
 endmodule

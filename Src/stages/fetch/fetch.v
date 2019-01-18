@@ -8,21 +8,20 @@ module fetch(
 	     output wire 		       itlb_miss,
 	     output wire 		       itlb_ready,
 	     input wire 		       privilege,
-	     output wire [`PHYS_ADDR_SIZE-1:0] phys_address
+	     output wire [`PHYS_ADDR_SIZE-1:0] phys_address,
+	     output 			       instruction_not_ready
 );
 
 reg [31:0]instruction;
 wire [31:0]pcIncr;
 wire [31:0]pcJump;
-reg waitInst;
 wire miss;
 
 assign pcJump = {pcIncr[31:28], instruction[25:0]<<2};
 assign pcIncr = pc.pc + 4;
 
-initial begin
-	waitInst = 0;
-end 
+   assign instruction_not_ready = miss && ~itlb_miss;
+   
 
    tlb itlb(  .clock(clock),
 	      .virtual_address_i(pc.pc),
@@ -39,8 +38,11 @@ end
 
 instCache instCache(.address(phys_address), .miss(miss));
 
-always @(miss or instCache.data) begin
-	if (waitInst == 0) begin
+   assign waitInstr = miss || instCache.data;
+   
+   
+always @(*) begin
+	if (!waitInstr) begin
 		if (miss == 0) begin
 		   instruction = instCache.data;
 		end else begin
@@ -48,16 +50,12 @@ always @(miss or instCache.data) begin
 		      $display("Cache miss for pc %x and phys %x", pc.pc, phys_address);
 		      arb.reqI = 1;
 		      arb.reqAddrI = phys_address;
-		      pc.we = 0;
-		      if_id.clear = 1;
-		      waitInst = 1;
 		   end
 		end
-	end else begin // if (waitInst == 0)
-	   $display("Wait Inst");
-		pc.we = 0;
-		if_id.clear = 1;
 	end
+/*	end else begin // if (waitInst == 0)
+	   $display("Wait Inst");
+	end*/
 end
 
 endmodule

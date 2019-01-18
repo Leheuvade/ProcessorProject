@@ -4,10 +4,12 @@
 `include "stages/decode/components/file_register.v"
 `include "stages/decode/components/hazardDetectionUnit.v"
 
-module decode;
+module decode(output decode_detectHazard_flush_CtrlBits);
 
 wire [31:0]address;
 wire[4:0]rd, rs, rt;
+
+   assign decode_detectHazard_flush_CtrlBits = flush_CtrlBits;
 
 assign address = {16'b0, if_id.instruction[15:0]};
 assign rs = if_id.instruction[25:21];

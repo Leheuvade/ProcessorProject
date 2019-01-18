@@ -19,6 +19,8 @@
 `include "main_memory/main_memory.v"
 `include "main_memory/arb.v"
 
+`include "stall_control/stall_control.v"
+
 
 module firstCPU;
 
@@ -35,21 +37,10 @@ initial begin
   //Set clock
   clock = 0;
 
-  //Set rst
-  pc.rst = 1;
-  if_id.rst = 1;
-  mem_wb.clear = 0;
-
-  //Set we
-  pc.we = 1;
-  if_id.we = 1;
-  id_ex.we = 1;
-  ex_mem.we = 1;
 
    //Set privilege
    privilege = 0;
-   
-  #4 pc.rst = 0;if_id.rst = 0;
+
   #74 $finish;
 end
 
@@ -78,7 +69,10 @@ mux32 mux32(.in1(fetch.pcIncr), .in2(ex_mem.pcBranch), .ctrl(ex_mem.pcSrc), .out
 pc pc(.clock(clock));
 
    // Stall control
-
+   wire 	 exec_flushPrevInstr;
+   wire 	 decode_detectHazard_flush_CtrlBits;
+   wire 	 id_ex_iret;
+   wire 	 mem_wb_exception;
    stall_control stall_control(
 			       // Memory stage
 			       .d_cache_miss(d_cache_miss),
@@ -86,6 +80,8 @@ pc pc(.clock(clock));
 
 			       // Fetch stage
 			       .instruction_not_ready(instruction_not_ready),
+			       .exec_flushPrevInstr(exec_flushPrevInstr),
+		      	       .decode_detectHazard_flush_CtrlBits(decode_detectHazard_flush_CtrlBits),
 
 			       .stall_at_wb(),
 			       .bubble_at_wb(),
@@ -107,6 +103,7 @@ pc pc(.clock(clock));
    wire 	       itlb_miss;
    wire 	       itlb_ready;
    wire [`PHYS_ADDR_SIZE-1:0]   pc_phys_address;
+   wire 			instruction_not_ready;
   
 fetch fetch(
 		.itlb_w_virtual_page_i(itlb_w_virtual_page_i),
@@ -115,7 +112,9 @@ fetch fetch(
  		.itlb_miss(itlb_miss),
  		.itlb_ready(itlb_ready),
 		.privilege(privilege),
-		.phys_address(pc_phys_address)
+		.phys_address(pc_phys_address),
+
+	    .instruction_not_ready(instruction_not_ready)
 );
 
 main_memory main_memory();
@@ -126,7 +125,7 @@ arb arb();
 if_id if_id(.clock(clock), .itlb_miss(itlb_miss), .itlb_ready(itlb_ready));
 
 //Decode stage 
-decode decode();
+decode decode(.decode_detectHazard_flush_CtrlBits(decode_detectHazard_flush_CtrlBits));
 
 //Flip Flop ID_EX
 id_ex id_ex(.clock(clock), .privilege(privilege));
@@ -137,7 +136,8 @@ id_ex id_ex(.clock(clock), .privilege(privilege));
    assign dtlb_w_virtual_page_i = itlb_w_virtual_page_i;
    exec exec(.enable_tlb_write_o(itlb_write_enable_i),
 	     .virtual_page_o(itlb_w_virtual_page_i),
-	     .phys_page_o(itlb_w_phys_page_i));
+	     .phys_page_o(itlb_w_phys_page_i),
+	     .exec_flushPrevInstr(exec_flushPrevInstr));
 
 //Flip Flop EX_MEM
 ex_mem ex_mem(.clock(clock));
@@ -148,13 +148,18 @@ ex_mem ex_mem(.clock(clock));
    wire 		  dtlb_write_enable_i;
    wire 		  dtlb_miss;
    wire 		  dtlb_ready;
+   wire 		  d_cache_miss;
+   wire 		  enable_write_from_d_cache_to_memory;
 cache cache(
 		       .dtlb_w_virtual_page_i(dtlb_w_virtual_page_i),
 		       .dtlb_w_phys_page_i(dtlb_w_phys_page_i),
 		       .dtlb_write_enable_i(dtlb_write_enable_i),
  		       .dtlb_miss(dtlb_miss),
  		       .dtlb_ready(dtlb_ready),
-		       .privilege(privilege)
+		       .privilege(privilege),
+
+	    .d_cache_miss(d_cache_miss),
+	    .enable_write_from_d_cache_to_memory(enable_write_from_d_cache_to_memory)
 );
 
 //Flip Flop MEM_WB
