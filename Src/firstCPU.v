@@ -77,6 +77,28 @@ mux32 mux32(.in1(fetch.pcIncr), .in2(ex_mem.pcBranch), .ctrl(ex_mem.pcSrc), .out
 //Flip Flop PC 
 pc pc(.clock(clock));
 
+   // Stall control
+
+   stall_control stall_control(
+			       // Memory stage
+			       .d_cache_miss(d_cache_miss),
+			       .enable_write_from_cache_to_memory(enable_write_from_d_cache_to_memory),
+
+			       // Fetch stage
+			       .instruction_not_ready(instruction_not_ready),
+
+			       .stall_at_wb(),
+			       .bubble_at_wb(),
+			       .stall_at_memory(),
+			       .bubble_at_memory(),
+			       .stall_at_exec(),
+			       .bubble_at_exec(),
+			       .stall_at_decode(),
+			       .bubble_at_decode(),
+			       .stall_at_fetch(),
+			       .bubble_at_fetch()
+			       );
+
 //Fetch stage
    
    wire [31-`OFFSET:0] itlb_w_virtual_page_i;
