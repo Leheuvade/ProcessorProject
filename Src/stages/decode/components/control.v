@@ -7,6 +7,7 @@ reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, jump, word;
 wire [5:0]opcode = if_id.instruction[31:26];
 
 always @ (opcode) begin
+   $display("Opcode %x", opcode);
    tlb_write = 0;
    iret = 0;
    ignore_op2 = 0;
@@ -110,6 +111,7 @@ case(opcode)
      jump = 0;
      word = 0;
      ignore_op2 = 1;
+     $display("Decoded MOVRM1");
   end
   `TLBWRITE : begin
      regDst = 0;
@@ -122,6 +124,7 @@ case(opcode)
      jump = 0;
      word = 0;
      tlb_write = 1;
+     $display("Decoded TLB_WRITE");
   end
   `IRET : begin
      regDst = 0;
