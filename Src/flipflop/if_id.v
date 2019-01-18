@@ -8,7 +8,6 @@ reg [31:0]instruction, pc, pcJump;
    reg [31:0]	  faulty_address;
    wire 	  we = ~ stall_control.stall_at_decode;
    wire 	  rst = ~stall_control.bubble_at_decode;
-   
 	
 always @ (posedge clock) begin
 	if (!we) begin

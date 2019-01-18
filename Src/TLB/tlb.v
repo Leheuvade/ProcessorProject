@@ -5,7 +5,7 @@ module tlb(input wire clock,
 	   input wire [31:0] 		     virtual_address_i,
 	   output wire [`PHYS_ADDR_SIZE-1:0] phys_address_o,
 	   output reg 			     ready_o,
-	   output reg 			     tlb_miss_o,
+	   output wire 			     tlb_miss_o,
 	   input wire 			     privilege_i,
 	   
 	   // For modifying the tlb
@@ -66,17 +66,16 @@ module tlb(input wire clock,
 
    assign TLB_index = out_index_ored[TLB_SIZE-1];
 
+   assign tlb_miss_o = !privilege_i && found==0;
+   
    always@(*) begin
       phys_page_o = 0;
-      tlb_miss_o = 1;
       if (privilege_i) begin
 	 $display("Privilege so not changing address");
 	 phys_page_o = virtual_page_i;
-	 tlb_miss_o = 0;
       end else if (found!=0) begin
 	 $display("Found TLB translation %x for phys %x", phys_address_o, virtual_address_i);
 	 phys_page_o = phys_page[TLB_index];
-	 tlb_miss_o = 0;
       end else begin
 	 $display("TLB miss for %x", virtual_address_i);
       end

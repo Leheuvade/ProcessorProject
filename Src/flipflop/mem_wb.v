@@ -14,6 +14,10 @@ reg exception;
    reg [31:0] pc;
 
 wire should_raise_exception = (ex_mem.exception || (dtlb_miss && dtlb_ready && cache.enable));
+
+always@(*) begin
+   $display("Ex excp %x, dtlb_miss %x", ex_mem.exception, dtlb_miss);
+end
    
 always @ (posedge clock)begin 
    if (!we) begin

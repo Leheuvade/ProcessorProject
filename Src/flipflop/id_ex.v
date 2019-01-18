@@ -25,6 +25,11 @@ reg regDst, branch, memRead, memToReg, memWrite, aluSrc, regWrite, word;
       rs = 0;
       rt = 0;
    end
+
+
+   always @ (*) begin
+      $display("IF EXC %x, TLB_W %x", if_id.exception, decode.control.tlb_write);
+   end
    
 always @ (posedge clock) begin
    if(!we) begin
